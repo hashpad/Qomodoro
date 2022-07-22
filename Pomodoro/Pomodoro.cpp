@@ -7,24 +7,19 @@
 using namespace std;
 
 
-Pomodoro::Pomodoro(Timer &timer, bool isRunning) : timer(timer),
+Pomodoro::Pomodoro(Timer* timer, bool isRunning) :
+    timer(timer),
     isRunning(isRunning)
 {
 }
 
-void Pomodoro::run() {
-    while(isRunning) {
-        this->timer.setCurrent(this->timer.getCurrent()+1);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-}
 
-Timer &Pomodoro::getTimer() const
+Timer *Pomodoro::getTimer() const
 {
     return timer;
 }
 
-void Pomodoro::setTimer(const Timer &newTimer)
+void Pomodoro::setTimer(Timer* newTimer)
 {
     timer = newTimer;
 }
@@ -39,9 +34,14 @@ void Pomodoro::setIsRunning(bool newIsRunning)
     isRunning = newIsRunning;
 }
 
-void Pomodoro::setUi(Ui::MainWindow* ui) {
-    this->ui = ui;
+Pomodoro::State Pomodoro::getState() const {
+    return state;
 }
-Ui::MainWindow* const Pomodoro::getUi() const {
-    return this->ui;
+void Pomodoro::setState(const Pomodoro::State newState) {
+    state = newState;
+}
+
+string Pomodoro::stateAsString(Pomodoro::State state) const {
+    auto findIt = mappedState.find(state);
+    return findIt->second;
 }

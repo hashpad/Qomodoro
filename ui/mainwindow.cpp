@@ -2,18 +2,24 @@
 #include "./ui_mainwindow.h"
 
 #include "preferences.h"
+#include "preferences.h"
 
 #include "Pomodoro/Pomodoro.h"
 #include "Pomodoro/Timer.h"
 
-Timer timer = Timer(3600, 0);
-Pomodoro pomodoro = Pomodoro(timer, false);
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , pomodoroModel(new Pomodoro(new Timer(3600, 0), false))
+
     , ui(new Ui::MainWindow)
+    , pref(new Preferences(this, pomodoroModel))
+
+    , modeComboModel(createModeComboModel())
 {
+
     ui->setupUi(this);
+
 
     QBarSet *set0 = new QBarSet("today");
 
@@ -38,59 +44,86 @@ MainWindow::MainWindow(QWidget *parent)
 
     chart->legend()->setVisible(false);
 
-    ui->graphicsView->setChart(chart);
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->chartView->setChart(chart);
+    ui->chartView->setRenderHint(QPainter::Antialiasing);
 
-    ui->leftTimeLbl->setText(QString::fromStdString(pomodoro.getTimer().getLeftString()));
+    ui->modeCombo->setModel(modeComboModel);
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
+
+
+
+
+    connect(pref, &Preferences::leftValueUpdate, this, &MainWindow::on_leftValueUpdate);
+
+
+    connect(this->ui->startPauseBtn, &QPushButton::clicked, this, &MainWindow::on_startPauseBtnClicked);
+    connect(this->ui->stopBtn, &QPushButton::clicked, this, &MainWindow::on_stopBtnClicked);
+    connect(this->ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::on_settingsBtnClicked);
 }
 
 MainWindow::~MainWindow()
 {
+    delete pref;
+    delete pomodoroModel;
     delete ui;
 }
 
-void MainWindow::on_runningBtn_clicked()
+void MainWindow::on_startPauseBtnClicked()
 {
-    if(!pomodoro.getIsRunning()) {
-        ui->runningBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
-        pomodoro.setIsRunning(true);
-        timer.setQTimer(new QTimer(this));
-        connect(timer.getQTimer(), SIGNAL(timeout()), this, SLOT(increment_timer()));
-        timer.getQTimer()->start(1000);
+    if(!this->pomodoroModel->getIsRunning()) {
+        ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
+        this->pomodoroModel->setIsRunning(true);
+        this->pomodoroModel->getTimer()->setQTimer(new QTimer(this));
+        connect(this->pomodoroModel->getTimer()->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
+        this->pomodoroModel->getTimer()->getQTimer()->start(1000);
     }else {
-        ui->runningBtn->setIcon(QIcon::fromTheme("media-playback-start"));
-        pomodoro.setIsRunning(false);
-        timer.getQTimer()->stop();
-        delete timer.getQTimer();
+        ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
+        this->pomodoroModel->setIsRunning(false);
+        this->pomodoroModel->getTimer()->getQTimer()->stop();
+        delete this->pomodoroModel->getTimer()->getQTimer();
     }
 }
 
-void MainWindow::increment_timer() {
-    pomodoro.getTimer().increment();
-    update_left_label();
+void MainWindow::incrementTimer() {
+    this->pomodoroModel->getTimer()->increment();
+    update_leftLabel();
 }
 
 
-void MainWindow::on_stopBtn_clicked()
+void MainWindow::on_stopBtnClicked()
 {
-    if(pomodoro.getIsRunning()) {
-        on_runningBtn_clicked();
-        pomodoro.getTimer().reset();
+    if(this->pomodoroModel->getIsRunning()) {
+        on_startPauseBtnClicked();
+        this->pomodoroModel->getTimer()->reset();
     }
     else {
-        pomodoro.getTimer().reset();
+        this->pomodoroModel->getTimer()->reset();
     }
-    update_left_label();
+    update_leftLabel();
 }
 
 
-void MainWindow::update_left_label() {
-    ui->leftTimeLbl->setText(QString::fromStdString(pomodoro.getTimer().getLeftString()));
+void MainWindow::update_leftLabel() {
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
+}
+void MainWindow::on_leftValueUpdate() {
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
 }
 
-void MainWindow::on_settingsBtn_clicked()
+void MainWindow::on_settingsBtnClicked()
 {
-    Preferences* pref = new Preferences(this);
     pref->show();
 }
 
+
+QStringListModel* MainWindow::createModeComboModel() {
+    QStringList* modeComboModel = new QStringList();
+    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::POMODORO));
+    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::SHORT_BREAK));
+    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::LONG_BREAK));
+
+    QStringListModel* modeModel = new QStringListModel(this);
+    modeModel->setStringList(*modeComboModel);
+
+    return modeModel;
+}

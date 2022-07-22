@@ -51,7 +51,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="pomodoroDurationLbl">
               <property name="text">
                <string>25 minutes</string>
               </property>
@@ -60,7 +60,13 @@
            </layout>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="pomodoroDurationSlider">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>120</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>

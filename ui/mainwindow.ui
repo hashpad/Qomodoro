@@ -42,7 +42,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="mainTabWidget">
         <property name="styleSheet">
          <string notr="true">QTabWidget::tab-bar {
             alignment: center;
@@ -90,7 +90,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="modeCombo">
                 <item>
                  <property name="text">
                   <string>Pomodoro</string>
@@ -181,12 +181,13 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="runningBtn">
+               <widget class="QPushButton" name="startPauseBtn">
                 <property name="text">
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="media-playback-start"/>
+                 <iconset theme="media-playback-start">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -196,7 +197,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="media-playback-stop"/>
+                 <iconset theme="media-playback-stop">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -257,7 +259,7 @@
                <enum>QTabWidget::North</enum>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <property name="documentMode">
                <bool>false</bool>
@@ -284,17 +286,18 @@
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_3">
                     <item>
-                     <widget class="QPushButton" name="pushButton">
+                     <widget class="QPushButton" name="prevDay">
                       <property name="text">
                        <string/>
                       </property>
                       <property name="icon">
-                       <iconset theme="go-previous"/>
+                       <iconset theme="go-previous">
+                        <normaloff>.</normaloff>.</iconset>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="nextDay">
                       <property name="text">
                        <string/>
                       </property>
@@ -318,7 +321,7 @@
                      </spacer>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label">
+                     <widget class="QLabel" name="todayLbl">
                       <property name="font">
                        <font>
                         <pointsize>13</pointsize>
@@ -346,7 +349,7 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="QChartView" name="graphicsView"/>
+                   <widget class="QChartView" name="chartView"/>
                   </item>
                  </layout>
                 </item>

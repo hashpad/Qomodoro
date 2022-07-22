@@ -71,6 +71,12 @@ string Timer::getLeftString() const
     return min + ":" + sec;
 }
 
+string Timer::getLengthString() const
+{
+    int min = length / 60;
+    return to_string(min) + "min";
+}
+
 Timer::~Timer()
 {
     delete qTimer;

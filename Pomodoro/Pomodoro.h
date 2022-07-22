@@ -1,22 +1,33 @@
 #pragma once
 #include "Timer.h"
-#include "../ui/mainwindow.h"
 
 class Pomodoro {
 public:
-    Pomodoro(Timer &timer, bool isRunning);
-    Timer &getTimer() const;
-    void setTimer(const Timer &newTimer);
+    enum State {
+        POMODORO,
+        LONG_BREAK,
+        SHORT_BREAK,
+    };
+    Pomodoro(Timer* timer, bool isRunning);
+
+    Timer* getTimer() const;
+    void setTimer(Timer *newTimer);
+
     bool getIsRunning() const;
-    void setIsRunning(bool newIsRunning);
+    void setIsRunning(const bool newIsRunning);
 
-    Ui::MainWindow* const getUi() const;
-    void setUi(Ui::MainWindow* ui);
+    State getState() const;
+    void setState(const State newState);
 
-    void run();
+    string stateAsString(State state) const;
+
 
 private:
-    Timer& timer;
+    State state;
+    Timer* timer;
     bool isRunning;
-    Ui::MainWindow* ui;
+
+    map<State, string> mappedState = {{State::POMODORO, "pomodoro"},
+                                      {State::SHORT_BREAK, "short break"},
+                                      {State::LONG_BREAK, "long break"}};
 };

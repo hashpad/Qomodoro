@@ -1,12 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Pomodoro/Pomodoro.h"
+#include "Pomodoro/Timer.h"
+
 #include <QMainWindow>
 
 #include <QtCharts>
 #include <QChartView>
 #include <QPieSeries>
 #include <QPieSlice>
+
+
+#include "preferences.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,14 +27,27 @@ public:
     ~MainWindow();
 
 private slots:
-    void increment_timer();
-    void update_left_label();
-    void on_runningBtn_clicked();
-    void on_stopBtn_clicked();
+    void update_leftLabel();
+    void on_startPauseBtnClicked();
+    void on_stopBtnClicked();
+    void on_settingsBtnClicked();
 
-    void on_settingsBtn_clicked();
+
+    void on_leftValueUpdate();
+
+    void incrementTimer();
+
 
 private:
+    Pomodoro* pomodoroModel;
+
     Ui::MainWindow *ui;
+    Preferences *pref;
+
+    QStringListModel* modeComboModel;
+
+
+
+    QStringListModel* createModeComboModel();
 };
 #endif // MAINWINDOW_H

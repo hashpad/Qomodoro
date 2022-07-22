@@ -25,6 +25,7 @@ public:
     int getMinutesLeft() const;
 
     string getLeftString() const;
+    string getLengthString() const;
 
     ~Timer();
 
