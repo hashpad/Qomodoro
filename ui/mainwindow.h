@@ -3,6 +3,11 @@
 
 #include <QMainWindow>
 
+#include <QtCharts>
+#include <QChartView>
+#include <QPieSeries>
+#include <QPieSlice>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -16,8 +21,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_runningBtn_clicked();
     void increment_timer();
+    void update_left_label();
+    void on_runningBtn_clicked();
+    void on_stopBtn_clicked();
+
+    void on_settingsBtn_clicked();
 
 private:
     Ui::MainWindow *ui;

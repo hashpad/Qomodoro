@@ -31,6 +31,11 @@ void Timer::increment()
         ++this->current;
 }
 
+void Timer::reset()
+{
+    this->current = 0;
+}
+
 
 QTimer * const Timer::getQTimer() const
 {
@@ -60,8 +65,10 @@ int Timer::getMinutesLeft() const
 
 string Timer::getLeftString() const
 {
-
-    return to_string(this->getMinutesLeft()) + ":" + to_string(this->getSecondsLeft());
+    string sec = to_string(this->getSecondsLeft());
+    string min = to_string(this->getMinutesLeft());
+    if(sec.length() == 1) sec = "0" + sec;
+    return min + ":" + sec;
 }
 
 Timer::~Timer()

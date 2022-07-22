@@ -14,6 +14,7 @@ public:
     void setCurrent(int newCurrent);
 
     void increment();
+    void reset();
 
     QTimer* const getQTimer() const;
     void setQTimer(QTimer* newQTimer);
