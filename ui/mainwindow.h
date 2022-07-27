@@ -1,8 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include "Pomodoro/Pomodoro.h"
-#include "Pomodoro/Timer.h"
+#pragma once
+#include "Pomodoro/pomodoro.h"
 
 #include <QMainWindow>
 
@@ -50,4 +47,3 @@ private:
 
     QStringListModel* createModeComboModel();
 };
-#endif // MAINWINDOW_H

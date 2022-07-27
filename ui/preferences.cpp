@@ -43,13 +43,13 @@ void Preferences::setPomodoroModel(Pomodoro *newPomodoroModel)
 
 void Preferences::on_horizontalSliderValueChanged(int value)
 {
-    pomodoroModel->getTimer()->setLength(value*60);
+    pomodoroModel->getState()->getTimer()->setLength(value*60);
     updatePomodoroDurationLbl();
     emit leftValueUpdate();
 }
 
 
 void Preferences::updatePomodoroDurationLbl() {
-    ui->pomodoroDurationLbl->setText(QString::fromStdString(pomodoroModel->getTimer()->getLengthString()));
-    ui->pomodoroDurationSlider->setValue(pomodoroModel->getTimer()->getLength() / 60);
+    ui->pomodoroDurationLbl->setText(QString::fromStdString(pomodoroModel->getState()->getTimer()->getLengthString()));
+    ui->pomodoroDurationSlider->setValue(pomodoroModel->getState()->getTimer()->getLength() / 60);
 }

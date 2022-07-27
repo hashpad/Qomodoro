@@ -1,16 +1,11 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
 
-#include "preferences.h"
-#include "preferences.h"
-
-#include "Pomodoro/Pomodoro.h"
-#include "Pomodoro/Timer.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(false, 5, 300 /* 5min */ , 600 /* 10 min */))
+    , pomodoroModel(new Pomodoro(false, new FocusState(new Timer(3600, 0))))
 
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
@@ -48,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chartView->setRenderHint(QPainter::Antialiasing);
 
     ui->modeCombo->setModel(modeComboModel);
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
 
 
 
@@ -73,28 +68,22 @@ void MainWindow::on_startPauseBtnClicked()
     if(!this->pomodoroModel->getIsRunning()) {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
         this->pomodoroModel->setIsRunning(true);
-        this->pomodoroModel->getTimer()->setQTimer(new QTimer(this));
-        connect(this->pomodoroModel->getTimer()->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
-        this->pomodoroModel->getTimer()->getQTimer()->start(1000);
+        this->pomodoroModel->getState()->getTimer()->setQTimer(new QTimer(this));
+        connect(this->pomodoroModel->getState()->getTimer()->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
+        this->pomodoroModel->getState()->getTimer()->getQTimer()->start(1000);
     }else {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
         this->pomodoroModel->setIsRunning(false);
-        this->pomodoroModel->getTimer()->getQTimer()->stop();
-        delete this->pomodoroModel->getTimer()->getQTimer();
+        this->pomodoroModel->getState()->getTimer()->getQTimer()->stop();
+        delete this->pomodoroModel->getState()->getTimer()->getQTimer();
     }
 }
 
 void MainWindow::incrementTimer() {
-    auto* timer = this->pomodoroModel->getTimer();
+    auto* timer = this->pomodoroModel->getState()->getTimer();
     auto* pomodoro = this->pomodoroModel;
-    if(timer->increment()){
-        update_leftLabel();
-    }
-    else {
-        pomodoro->setState(Pomodoro::State::SHORT_BREAK);
-        incrementTimer();
-    }
-
+    timer->increment();
+    update_leftLabel();
 }
 
 
@@ -102,20 +91,20 @@ void MainWindow::on_stopBtnClicked()
 {
     if(this->pomodoroModel->getIsRunning()) {
         on_startPauseBtnClicked();
-        this->pomodoroModel->getTimer()->reset();
+        this->pomodoroModel->getState()->getTimer()->reset();
     }
     else {
-        this->pomodoroModel->getTimer()->reset();
+        this->pomodoroModel->getState()->getTimer()->reset();
     }
     update_leftLabel();
 }
 
 
 void MainWindow::update_leftLabel() {
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
 }
 void MainWindow::on_leftValueUpdate() {
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
 }
 
 void MainWindow::on_settingsBtnClicked()
@@ -126,9 +115,9 @@ void MainWindow::on_settingsBtnClicked()
 
 QStringListModel* MainWindow::createModeComboModel() {
     QStringList* modeComboModel = new QStringList();
-    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::POMODORO));
-    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::SHORT_BREAK));
-    *modeComboModel << QString::fromStdString(pomodoroModel->stateAsString(Pomodoro::State::LONG_BREAK));
+    *modeComboModel << QString::fromStdString(FocusState::getStaticName());
+    *modeComboModel << QString::fromStdString(ShortBreakState::getStaticName());
+    *modeComboModel << QString::fromStdString(LongBreakState::getStaticName());
 
     QStringListModel* modeModel = new QStringListModel(this);
     modeModel->setStringList(*modeComboModel);

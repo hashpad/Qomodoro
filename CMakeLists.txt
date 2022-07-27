@@ -22,10 +22,12 @@ set(PROJECT_SOURCES
         ui/preferences.cpp
         ui/preferences.h
         ui/preferences.ui
-        Pomodoro/Pomodoro.h
-        Pomodoro/Pomodoro.cpp
-        Pomodoro/Timer.h
-        Pomodoro/Timer.cpp
+        Pomodoro/pomodoro.h
+        Pomodoro/pomodoro.cpp
+        Pomodoro/timer.h
+        Pomodoro/timer.cpp
+        Pomodoro/pomodorostate.h
+        Pomodoro/pomodorostate.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

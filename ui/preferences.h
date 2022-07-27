@@ -1,7 +1,6 @@
-#ifndef PREFERENCES_H
-#define PREFERENCES_H
+#pragma once
 
-#include "Pomodoro/Pomodoro.h"
+#include "Pomodoro/pomodoro.h"
 
 #include <QDialog>
 
@@ -37,5 +36,3 @@ private:
 
     void updatePomodoroDurationLbl();
 };
-
-#endif // PREFERENCES_H

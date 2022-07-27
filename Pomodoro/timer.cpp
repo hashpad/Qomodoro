@@ -1,4 +1,4 @@
-#include "Timer.h"
+#include "timer.h"
 
 
 #include <iostream>
@@ -25,12 +25,9 @@ void Timer::setCurrent(int newCurrent)
     current = newCurrent;
 }
 
-bool Timer::increment()
+void Timer::increment()
 {
-    bool canInc = this->current < this->length;
-    if(canInc)
-        ++this->current;
-    return canInc;
+    ++this->current;
 }
 
 void Timer::reset()

@@ -1,7 +1,8 @@
 #pragma once
-#include <iostream>
 
 #include <QTimer>
+
+#include <iostream>
 using namespace std;
 
 class Timer {
@@ -13,7 +14,7 @@ public:
     int getCurrent() const;
     void setCurrent(int newCurrent);
 
-    bool increment();
+    void increment();
     void reset();
 
     QTimer* const getQTimer() const;
