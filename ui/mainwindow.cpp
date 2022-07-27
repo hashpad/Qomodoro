@@ -10,7 +10,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(new Timer(3600, 0), false))
+    , pomodoroModel(new Pomodoro(false, 5, 300 /* 5min */ , 600 /* 10 min */))
 
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
@@ -85,8 +85,16 @@ void MainWindow::on_startPauseBtnClicked()
 }
 
 void MainWindow::incrementTimer() {
-    this->pomodoroModel->getTimer()->increment();
-    update_leftLabel();
+    auto* timer = this->pomodoroModel->getTimer();
+    auto* pomodoro = this->pomodoroModel;
+    if(timer->increment()){
+        update_leftLabel();
+    }
+    else {
+        pomodoro->setState(Pomodoro::State::SHORT_BREAK);
+        incrementTimer();
+    }
+
 }
 
 

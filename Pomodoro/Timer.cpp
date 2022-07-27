@@ -25,10 +25,12 @@ void Timer::setCurrent(int newCurrent)
     current = newCurrent;
 }
 
-void Timer::increment()
+bool Timer::increment()
 {
-    if(this->current < this->length)
+    bool canInc = this->current < this->length;
+    if(canInc)
         ++this->current;
+    return canInc;
 }
 
 void Timer::reset()

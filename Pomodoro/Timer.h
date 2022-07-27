@@ -13,7 +13,7 @@ public:
     int getCurrent() const;
     void setCurrent(int newCurrent);
 
-    void increment();
+    bool increment();
     void reset();
 
     QTimer* const getQTimer() const;
