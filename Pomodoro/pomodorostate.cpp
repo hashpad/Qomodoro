@@ -1,13 +1,15 @@
 #include "pomodorostate.h"
 
 
-
 FocusState::FocusState(Timer* timer): PomodoroState(timer){};
 
 void FocusState::increment()
 {
     if(timer->getCurrent() < timer->getLength())
         timer->increment();
+    else {
+        pomodoroContext->setActiveState(new ShortBreakState(new Timer(300, 0)));
+    }
 }
 string FocusState::getName() const
 {

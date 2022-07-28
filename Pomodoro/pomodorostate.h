@@ -1,11 +1,13 @@
 #pragma once
 
+#include "pomodoro.h"
 
 #include "timer.h"
 
 #include <iostream>
 using namespace std;
 
+class Pomodoro;
 class PomodoroState {
 public:
     PomodoroState(Timer* timer) : timer(timer) {};
@@ -14,6 +16,9 @@ public:
         return timer;
     }
     virtual void increment() = 0;
+    virtual void setPomodoroContext(Pomodoro* pomodoroContext) {
+       this->pomodoroContext = pomodoroContext;
+    };
     virtual std::string getName() const = 0;
     virtual ~PomodoroState() {
         delete timer;
@@ -21,6 +26,7 @@ public:
 protected:
     std::string name;
     Timer* timer;
+    Pomodoro* pomodoroContext;
 };
 class FocusState : public PomodoroState {
     // PomodoroState interface

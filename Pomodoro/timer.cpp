@@ -36,16 +36,6 @@ void Timer::reset()
 }
 
 
-QTimer * const Timer::getQTimer() const
-{
-    return this->qTimer;
-}
-
-void Timer::setQTimer(QTimer *newQTimer)
-{
-
-    this->qTimer = newQTimer;
-}
 
 int Timer::getLeft() const
 {
@@ -78,7 +68,6 @@ string Timer::getLengthString() const
 
 Timer::~Timer()
 {
-    delete qTimer;
 }
 
 Timer::Timer(int length, int current) : length(length),

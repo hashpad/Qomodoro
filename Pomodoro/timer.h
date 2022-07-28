@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QTimer>
 
 #include <iostream>
 using namespace std;
@@ -17,8 +16,6 @@ public:
     void increment();
     void reset();
 
-    QTimer* const getQTimer() const;
-    void setQTimer(QTimer* newQTimer);
 
     int getLeft() const;
 
@@ -34,5 +31,4 @@ public:
 private:
     int length;
     int current;
-    QTimer* qTimer;
 };

@@ -5,14 +5,13 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(false, new FocusState(new Timer(3600, 0))))
+    , pomodoroModel(new Pomodoro(false, new FocusState(new Timer(2, 0))))
 
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
 
     , modeComboModel(createModeComboModel())
 {
-
     ui->setupUi(this);
 
 
@@ -43,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chartView->setRenderHint(QPainter::Antialiasing);
 
     ui->modeCombo->setModel(modeComboModel);
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 
 
 
@@ -68,21 +67,20 @@ void MainWindow::on_startPauseBtnClicked()
     if(!this->pomodoroModel->getIsRunning()) {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
         this->pomodoroModel->setIsRunning(true);
-        this->pomodoroModel->getState()->getTimer()->setQTimer(new QTimer(this));
-        connect(this->pomodoroModel->getState()->getTimer()->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
-        this->pomodoroModel->getState()->getTimer()->getQTimer()->start(1000);
+        this->pomodoroModel->setQTimer(new QTimer(this));
+        connect(this->pomodoroModel->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
+        this->pomodoroModel->getQTimer()->start(1000);
     }else {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
         this->pomodoroModel->setIsRunning(false);
-        this->pomodoroModel->getState()->getTimer()->getQTimer()->stop();
-        delete this->pomodoroModel->getState()->getTimer()->getQTimer();
+        this->pomodoroModel->getQTimer()->stop();
+        delete this->pomodoroModel->getQTimer();
     }
 }
 
 void MainWindow::incrementTimer() {
-    auto* timer = this->pomodoroModel->getState()->getTimer();
-    auto* pomodoro = this->pomodoroModel;
-    timer->increment();
+
+    this->pomodoroModel->getActiveState()->increment();
     update_leftLabel();
 }
 
@@ -91,20 +89,20 @@ void MainWindow::on_stopBtnClicked()
 {
     if(this->pomodoroModel->getIsRunning()) {
         on_startPauseBtnClicked();
-        this->pomodoroModel->getState()->getTimer()->reset();
+        this->pomodoroModel->getActiveState()->getTimer()->reset();
     }
     else {
-        this->pomodoroModel->getState()->getTimer()->reset();
+        this->pomodoroModel->getActiveState()->getTimer()->reset();
     }
     update_leftLabel();
 }
 
 
 void MainWindow::update_leftLabel() {
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
 void MainWindow::on_leftValueUpdate() {
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getState()->getTimer()->getLeftString()));
+    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
 
 void MainWindow::on_settingsBtnClicked()

@@ -1,14 +1,16 @@
 #include "pomodoro.h"
 
 
+#include <QDebug>
 
 using namespace std;
 
 
-Pomodoro::Pomodoro(bool isRunning, PomodoroState* initialState):
-    state(initialState),
-    isRunning(isRunning)
+Pomodoro::Pomodoro(bool isRunning, PomodoroState* activeState):
+    isRunning(isRunning),
+    activeState(activeState)
 {
+    this->activeState->setPomodoroContext(this);
 }
 
 bool Pomodoro::getIsRunning() const
@@ -21,13 +23,28 @@ void Pomodoro::setIsRunning(bool newIsRunning)
     isRunning = newIsRunning;
 }
 
-PomodoroState* Pomodoro::getState() const {
-    return state;
+PomodoroState* Pomodoro::getActiveState() const {
+    return activeState;
 }
-void Pomodoro::setState(PomodoroState* newState) {
-    state = newState;
+void Pomodoro::setActiveState(PomodoroState* const newState) {
+    if(activeState)
+        delete activeState;
+    activeState = newState;
+    activeState->setPomodoroContext(this);
 }
 
 Pomodoro::~Pomodoro() {
-    delete state;
+    delete activeState;
+    delete qTimer;
+}
+
+QTimer * const Pomodoro::getQTimer() const
+{
+    return this->qTimer;
+}
+
+void Pomodoro::setQTimer(QTimer *newQTimer)
+{
+
+    this->qTimer = newQTimer;
 }
