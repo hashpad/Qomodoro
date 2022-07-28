@@ -1,6 +1,6 @@
 #include "pomodoro.h"
 
-
+#include <QMediaPlayer>
 #include <QDebug>
 
 using namespace std;
@@ -28,11 +28,17 @@ PomodoroState* Pomodoro::getActiveState() const {
     return activeState;
 }
 void Pomodoro::setActiveState(PomodoroState* const newState) {
+    bool done = activeState->getTimer()->getLeft() == 0;
+    qDebug() << done;
+
     if(activeState)
         delete activeState;
     activeState = newState;
     activeState->setPomodoroContext(this);
-    emit stateChange();
+    if(!done)
+        emit stateChange();
+    else
+        emit stateDone();
 }
 
 Pomodoro::~Pomodoro() {

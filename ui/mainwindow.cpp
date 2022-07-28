@@ -1,17 +1,22 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(this, false, new FocusState(new Timer(2, 0))))
+    , pomodoroModel(new Pomodoro(this, false, new FocusState(new Timer(60, 0))))
 
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
 
     , modeComboModel(createModeComboModel())
+    , mediaPlayer(new QMediaPlayer(this))
 {
     ui->setupUi(this);
+
 
 
     QBarSet *set0 = new QBarSet("today");
@@ -54,7 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::on_settingsBtnClicked);
     connect(this->ui->modeCombo, &QComboBox::currentTextChanged, this, &MainWindow::on_modeComboCurrentTextChanged);
 
-    connect(pomodoroModel, &Pomodoro::stateChange, this, &MainWindow::triggerNotification);
+    connect(pomodoroModel, &Pomodoro::stateChange, this, &MainWindow::modeChange);
+
+    connect(pomodoroModel, &Pomodoro::stateDone, this, &MainWindow::modeDone);
 }
 
 MainWindow::~MainWindow()
@@ -72,20 +79,40 @@ void MainWindow::triggerNotification()
     this->activateWindow();
 }
 
-void MainWindow::on_startPauseBtnClicked()
-{
+void MainWindow::startPomodoro() {
     if(!this->pomodoroModel->getIsRunning()) {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));
         this->pomodoroModel->setIsRunning(true);
         this->pomodoroModel->setQTimer(new QTimer(this));
         connect(this->pomodoroModel->getQTimer(), &QTimer::timeout, this, &MainWindow::incrementTimer);
         this->pomodoroModel->getQTimer()->start(1000);
-    }else {
+    }
+}
+void MainWindow::pausePomodoro() {
+    if(this->pomodoroModel->getIsRunning()) {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-start"));
         this->pomodoroModel->setIsRunning(false);
         this->pomodoroModel->getQTimer()->stop();
         delete this->pomodoroModel->getQTimer();
     }
+}
+void MainWindow::stopPomodoro() {
+    if(this->pomodoroModel->getIsRunning()) {
+        on_startPauseBtnClicked();
+        this->pomodoroModel->getActiveState()->getTimer()->reset();
+    }
+    else {
+        this->pomodoroModel->getActiveState()->getTimer()->reset();
+    }
+    update_leftLabel();
+}
+
+void MainWindow::on_startPauseBtnClicked()
+{
+    if(!this->pomodoroModel->getIsRunning())
+      startPomodoro();
+    else
+      pausePomodoro();
 }
 
 void MainWindow::incrementTimer() {
@@ -97,14 +124,7 @@ void MainWindow::incrementTimer() {
 
 void MainWindow::on_stopBtnClicked()
 {
-    if(this->pomodoroModel->getIsRunning()) {
-        on_startPauseBtnClicked();
-        this->pomodoroModel->getActiveState()->getTimer()->reset();
-    }
-    else {
-        this->pomodoroModel->getActiveState()->getTimer()->reset();
-    }
-    update_leftLabel();
+  this->stopPomodoro();
 }
 
 
@@ -112,7 +132,7 @@ void MainWindow::update_leftLabel() {
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
 void MainWindow::update_modeCombo() {
-    ui->modeCombo->setCurrentIndex(modeComboModel->stringList().indexOf(QString::fromStdString(pomodoroModel->getActiveState()->getName())));
+    ui->modeCombo->setCurrentText(QString::fromStdString(this->pomodoroModel->getActiveState()->getName()));
 }
 void MainWindow::on_leftValueUpdate() {
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
@@ -138,11 +158,37 @@ QStringListModel* MainWindow::createModeComboModel() {
 
 void MainWindow::on_modeComboCurrentTextChanged(const QString &state)
 {
-    if(state == QString::fromStdString(FocusState::getStaticName()))
+    if(state == QString::fromStdString(ShortBreakState::getStaticName()))
         pomodoroModel->setActiveState(new ShortBreakState(new Timer(300, 0)));
-    else if(state == QString::fromStdString(FocusState::getStaticName()))
+    else if(state == QString::fromStdString(LongBreakState::getStaticName()))
         pomodoroModel->setActiveState(new LongBreakState(new Timer(600, 0)));
     else
-        pomodoroModel->setActiveState(new FocusState(new Timer(3600, 0)));
+        pomodoroModel->setActiveState(new FocusState(new Timer(2, 0)));
+}
+void MainWindow::startMedia(int playFor) {
+    mediaQtimer = new QTimer(this);
+    mediaPlayer->setAudioOutput(new QAudioOutput(this));
+    mediaPlayer->setSource(QUrl::fromLocalFile("/home/aosome/QTResources/pomodoro_done.mp3"));
+
+    mediaQtimer->start(playFor);
+
+    mediaPlayer->play();
+
+    connect(this->mediaQtimer, &QTimer::timeout, this, &MainWindow::stopMedia);
 }
 
+void MainWindow::stopMedia() {
+    mediaQtimer->stop();
+    mediaPlayer->stop();
+    delete mediaPlayer->audioOutput();
+}
+
+void MainWindow::modeDone() {
+    modeChange();
+    this->raise();
+    startMedia(10000);
+}
+void MainWindow::modeChange() {
+    update_modeCombo();
+    update_leftLabel();
+}

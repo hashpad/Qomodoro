@@ -34,4 +34,5 @@ private:
 
 signals:
     emit void stateChange();
+    emit void stateDone();
 };

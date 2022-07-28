@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <QMediaPlayer>
+
 #include <QtCharts>
 #include <QChartView>
 #include <QPieSeries>
@@ -31,6 +33,14 @@ private slots:
     void on_settingsBtnClicked();
 
     void triggerNotification();
+    void modeChange();
+    void modeDone();
+    void startPomodoro();
+    void pausePomodoro();
+    void stopPomodoro();
+
+    void startMedia(int playFor);
+    void stopMedia();
 
     void on_leftValueUpdate();
 
@@ -47,7 +57,12 @@ private:
 
     QStringListModel* modeComboModel;
 
+    QMediaPlayer* mediaPlayer;
+    QTimer* mediaQtimer;
+
 
 
     QStringListModel* createModeComboModel();
+
+
 };
