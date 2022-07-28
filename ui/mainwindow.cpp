@@ -2,10 +2,9 @@
 #include "ui_mainwindow.h"
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(false, new FocusState(new Timer(2, 0))))
+    , pomodoroModel(new Pomodoro(this, false, new FocusState(new Timer(2, 0))))
 
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
@@ -53,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->startPauseBtn, &QPushButton::clicked, this, &MainWindow::on_startPauseBtnClicked);
     connect(this->ui->stopBtn, &QPushButton::clicked, this, &MainWindow::on_stopBtnClicked);
     connect(this->ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::on_settingsBtnClicked);
+    connect(this->ui->modeCombo, &QComboBox::currentTextChanged, this, &MainWindow::on_modeComboCurrentTextChanged);
+
+    connect(pomodoroModel, &Pomodoro::stateChange, this, &MainWindow::triggerNotification);
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +62,14 @@ MainWindow::~MainWindow()
     delete pref;
     delete pomodoroModel;
     delete ui;
+}
+
+void MainWindow::triggerNotification()
+{
+    /* TODO: implement systray icon notification (maybe over dbus?) */
+    this->show();
+    this->raise();
+    this->activateWindow();
 }
 
 void MainWindow::on_startPauseBtnClicked()
@@ -101,6 +111,9 @@ void MainWindow::on_stopBtnClicked()
 void MainWindow::update_leftLabel() {
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
+void MainWindow::update_modeCombo() {
+    ui->modeCombo->setCurrentIndex(modeComboModel->stringList().indexOf(QString::fromStdString(pomodoroModel->getActiveState()->getName())));
+}
 void MainWindow::on_leftValueUpdate() {
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
@@ -112,13 +125,24 @@ void MainWindow::on_settingsBtnClicked()
 
 
 QStringListModel* MainWindow::createModeComboModel() {
-    QStringList* modeComboModel = new QStringList();
-    *modeComboModel << QString::fromStdString(FocusState::getStaticName());
-    *modeComboModel << QString::fromStdString(ShortBreakState::getStaticName());
-    *modeComboModel << QString::fromStdString(LongBreakState::getStaticName());
+    QStringList modeComboModel = QStringList();
+    modeComboModel << QString::fromStdString(FocusState::getStaticName());
+    modeComboModel << QString::fromStdString(ShortBreakState::getStaticName());
+    modeComboModel << QString::fromStdString(LongBreakState::getStaticName());
 
     QStringListModel* modeModel = new QStringListModel(this);
-    modeModel->setStringList(*modeComboModel);
+    modeModel->setStringList(modeComboModel);
 
     return modeModel;
 }
+
+void MainWindow::on_modeComboCurrentTextChanged(const QString &state)
+{
+    if(state == QString::fromStdString(FocusState::getStaticName()))
+        pomodoroModel->setActiveState(new ShortBreakState(new Timer(300, 0)));
+    else if(state == QString::fromStdString(FocusState::getStaticName()))
+        pomodoroModel->setActiveState(new LongBreakState(new Timer(600, 0)));
+    else
+        pomodoroModel->setActiveState(new FocusState(new Timer(3600, 0)));
+}
+

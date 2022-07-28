@@ -6,7 +6,8 @@
 using namespace std;
 
 
-Pomodoro::Pomodoro(bool isRunning, PomodoroState* activeState):
+Pomodoro::Pomodoro(QObject* _parent, bool isRunning, PomodoroState* activeState):
+    parent(_parent),
     isRunning(isRunning),
     activeState(activeState)
 {
@@ -31,6 +32,7 @@ void Pomodoro::setActiveState(PomodoroState* const newState) {
         delete activeState;
     activeState = newState;
     activeState->setPomodoroContext(this);
+    emit stateChange();
 }
 
 Pomodoro::~Pomodoro() {

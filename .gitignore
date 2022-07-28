@@ -1,1 +1,4 @@
 CMakeLists.txt.user
+bin/
+compile_commands.json
+.qt/

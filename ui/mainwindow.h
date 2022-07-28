@@ -25,15 +25,19 @@ public:
 
 private slots:
     void update_leftLabel();
+    void update_modeCombo();
     void on_startPauseBtnClicked();
     void on_stopBtnClicked();
     void on_settingsBtnClicked();
 
+    void triggerNotification();
 
     void on_leftValueUpdate();
 
     void incrementTimer();
 
+
+    void on_modeComboCurrentTextChanged(const QString &arg1);
 
 private:
     Pomodoro* pomodoroModel;

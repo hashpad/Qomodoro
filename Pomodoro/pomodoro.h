@@ -7,9 +7,10 @@ class FocusState;
 class ShortBreakState;
 class LongBreakState;
 
-class Pomodoro {
+class Pomodoro : public QObject {
+Q_OBJECT
 public:
-    Pomodoro(bool isRunning, PomodoroState* activeState);
+    Pomodoro(QObject* _parent, bool isRunning, PomodoroState* activeState);
 
     bool getIsRunning() const;
     void setIsRunning(const bool newIsRunning);
@@ -28,4 +29,9 @@ private:
     QTimer* qTimer;
 
     bool isRunning;
+
+    QObject* parent;
+
+signals:
+    emit void stateChange();
 };
