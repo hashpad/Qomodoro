@@ -23,20 +23,23 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
 
-    qDebug() << "passed main constructor",
     ui->setupUi(this);
+
+    QChart* todayStats = createCharts(QDate::currentDate());
+    ui->chartView->setChart(todayStats);
+    ui->chartView->setRenderHint(QPainter::Antialiasing);
     qDebug() << "setup main ui",
 
     settings.beginGroup("MainWindow");
-    pomodoroModel->setPomodoroDuration(2);
-    pomodoroModel->setShortBreakDuration(2);
-    pomodoroModel->setLongBreakDuration(2);
-    pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
-
-//    pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
-//    pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
-//    pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
+//    pomodoroModel->setPomodoroDuration(2);
+//    pomodoroModel->setShortBreakDuration(2);
+//    pomodoroModel->setLongBreakDuration(2);
 //    pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
+
+    pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
+    pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
+    pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
+    pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
 
     qDebug() << "Pomodoro duration loaded",
     qDebug() <<  pomodoroModel->getPomodoroDuration();
@@ -46,31 +49,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() <<  "focus state set";
 
-//    QBarSet *set0 = new QBarSet("today");
-
-//    *set0 << 39 << 5;
-
-//    QBarSeries *series = new QBarSeries(ui->chartView);
-//    series->append(set0);
-
-//    QChart *chart = new QChart();
-//    chart->addSeries(series);
-//    chart->setAnimationOptions(QChart::SeriesAnimations);
-//    QStringList categories;
-//    categories << "Pomodoro" << "Break";
-//    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-//    axisX->append(categories);
-//    chart->addAxis(axisX, Qt::AlignBottom);
-//    series->attachAxis(axisX);
-
-//    QValueAxis *axisY = new QValueAxis();
-//    chart->addAxis(axisY, Qt::AlignLeft);
-//    series->attachAxis(axisY);
-
-//    chart->legend()->setVisible(false);
-
-//    ui->chartView->setChart(chart);
-//    ui->chartView->setRenderHint(QPainter::Antialiasing);
 
     ui->modeCombo->setModel(modeComboModel);
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
@@ -113,6 +91,41 @@ void MainWindow::triggerNotification()
     this->activateWindow();
 }
 
+QChart* MainWindow::createCharts(QDate date) {
+    QString daysName;
+    if(date == QDate::currentDate())
+        daysName = "Today";
+    else if(date == QDate::currentDate().addDays(-1))
+        daysName = "Yesterday";
+    else
+        daysName = date.toString("dddd, d MMM");
+
+    ui->dayLbl->setText(daysName);
+
+    QBarSet *set0 = new QBarSet(daysName);
+    *set0 << this->db.getPomodoro(QDate::currentDate()) << this->db.getBreak(QDate::currentDate());
+
+    QBarSeries *series = new QBarSeries(ui->chartView);
+    series->append(set0);
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+    QStringList categories;
+    categories << "Pomodoro" << "Break";
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis();
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    chart->legend()->setVisible(false);
+
+    return chart;
+}
 void MainWindow::startPomodoro() {
     if(!this->pomodoroModel->getIsRunning()) {
         ui->startPauseBtn->setIcon(QIcon::fromTheme("media-playback-pause"));

@@ -71,6 +71,8 @@ private:
     int pomodoroDuration, shortBreakDuration, longBreakDuration;
 
     QStringListModel* createModeComboModel();
+    // replace with from to
+    QChart* createCharts(QDate date);
 
 
 
