@@ -3,21 +3,26 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QDate>
 
 class Database : public QObject
 {
     Q_OBJECT
 public:
     explicit Database(QObject *parent = nullptr);
-    bool prepareDB();
+    void prepareDB();
 
-    bool insertPomodoro(QDate date, int length);
-    bool insertBreak(QDate date, int length);
+    int getPomodoro(QDate date);
+    int getBreak(QDate date);
 
-    bool getPomodoro(QDate date);
-    bool getBreak(QDate date);
-signals:
-    void updateEntries();
+    bool dateExists(QDate date);
+
+private:
+    void updatePomodoro(QDate date, int length);
+    void updateBreak(QDate date, int length);
+public slots:
+    void insertPomodoro(QDate date, int length);
+    void insertBreak(QDate date, int length);
 
 private:
     QSqlDatabase sqlDB;

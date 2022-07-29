@@ -14,7 +14,8 @@ public:
     virtual ~LengthObserver() {};
 };
 
-class PomodoroState : public LengthObserver {
+class PomodoroState : public QObject, public LengthObserver {
+    Q_OBJECT;
 public:
     PomodoroState() {};
 
@@ -36,6 +37,7 @@ public:
         if(timer)
             timer->setLength(newLength);
     }
+    virtual void save() = 0;
 protected:
     std::string name;
     Timer* timer;
@@ -50,6 +52,7 @@ public:
     static string getStaticName();
     void setTimer(Timer* newTimer) override;
     void setPomodoroContext(Pomodoro* pomodoroContext) override;;
+    void save() override;
 };
 class ShortBreakState : public PomodoroState {
     // PomodoroState interface
@@ -60,6 +63,7 @@ public:
     static string getStaticName();
     void setTimer(Timer* newTimer) override;
     void setPomodoroContext(Pomodoro* pomodoroContext) override;;
+    void save() override;
 };
 class LongBreakState : public PomodoroState {
     // PomodoroState interface
@@ -70,4 +74,5 @@ public:
     static string getStaticName();
     void setTimer(Timer* newTimer) override;
     void setPomodoroContext(Pomodoro* pomodoroContext) override;;
+    void save() override;
 };

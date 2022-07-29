@@ -11,11 +11,11 @@ Database::Database(QObject *parent)
     : QObject{parent},
     sqlDB(QSqlDatabase::addDatabase("QSQLITE"))
 {
+    sqlDB.setDatabaseName("/home/aosome/.config/Qomodoro/stats.db");
     prepareDB();
 }
 
-bool Database::prepareDB(){
-    sqlDB.setDatabaseName("/home/aosome/.config/Qomodoro/stats.db");
+void Database::prepareDB(){
     sqlDB.open();
     QSqlQuery databaseQuery(sqlDB);
     QString statement;
@@ -27,30 +27,134 @@ bool Database::prepareDB(){
                     << "break INT(255) DEFAULT NULL"
                     << ");";
     databaseQuery.exec(statement);
-    qDebug() << databaseQuery.lastError().text();
     sqlDB.close();
-    return true;
 }
 
-bool Database::insertPomodoro(QDate date, int length)
+void Database::insertPomodoro(QDate date, int length)
 {
-    return true;
+    qDebug() << "db insert pomodoro called";
+    if(dateExists(date) != 0) {
+        qDebug() << "found";
+        updatePomodoro(date, length);
+        return;
+    }
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "INSERT INTO stats"
+                    << "(date, pomodoro, break)"
+                    << " VALUES "
+                    << "(:date, :pomodoro, 0)"
+                    << ";";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.bindValue(":pomodoro", length);
+    databaseQuery.exec();
+    sqlDB.close();
 }
 
-bool Database::insertBreak(QDate date, int length)
+int Database::getPomodoro(QDate date)
 {
-
-    return true;
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "SELECT pomodoro FROM stats where date=(:date)";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.exec();
+    int value = 0;
+    if(databaseQuery.next()) {
+        value = databaseQuery.value(0).toInt();
+    }
+    sqlDB.close();
+    return value;
 }
 
-bool Database::getPomodoro(QDate date)
+void Database::updatePomodoro(QDate date, int length)
 {
-
-    return true;
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "UPDATE stats SET pomodoro=pomodoro + (:length) WHERE date=(:date)";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.bindValue(":length", length);
+    databaseQuery.exec();
+    sqlDB.close();
+}
+void Database::insertBreak(QDate date, int length)
+{
+    qDebug() << "db insert break called";
+    if(dateExists(date) != 0) {
+        updateBreak(date, length);
+        return;
+    }
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "INSERT INTO stats"
+                    << "(date, pomodoro, break)"
+                    << " VALUES "
+                    << "(:date, 0, :break)"
+                    << ";";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.bindValue(":break", length);
+    databaseQuery.exec();
+    sqlDB.close();
 }
 
-bool Database::getBreak(QDate date)
-{
 
-    return true;
+int Database::getBreak(QDate date)
+{
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "SELECT break FROM stats where date=(:date)";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.exec();
+    int value = 0;
+    if(databaseQuery.next()) {
+        value = databaseQuery.value(0).toInt();
+    }
+    sqlDB.close();
+    return value;
+}
+
+
+void Database::updateBreak(QDate date, int length)
+{
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "UPDATE stats SET break=break + (:length) WHERE date=(:date)";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.bindValue(":length", length);
+    databaseQuery.exec();
+    sqlDB.close();
+}
+
+bool Database::dateExists(QDate date) {
+    sqlDB.open();
+    QSqlQuery databaseQuery(sqlDB);
+    QString statement;
+    QTextStream statementStream(&statement);
+    statementStream << "SELECT * FROM stats where date=(:date)";
+    databaseQuery.prepare(statement);
+    databaseQuery.bindValue(":date", date);
+    databaseQuery.exec();
+    bool exists = false;
+    while(databaseQuery.next())
+        exists = true;
+    sqlDB.close();
+    qDebug() << databaseQuery.size();
+    return exists;
 }

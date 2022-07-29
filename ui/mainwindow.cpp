@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <QDate>
 #include <QMediaPlayer>
 #include <QAudioOutput>
 
@@ -10,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     // external models
     , pomodoroModel(new Pomodoro(this))
-    , db(Database())
+    , db(Database(this))
 
     // ui elements
     , ui(new Ui::MainWindow)
@@ -27,11 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "setup main ui",
 
     settings.beginGroup("MainWindow");
-
-    pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
-    pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
-    pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
+    pomodoroModel->setPomodoroDuration(2);
+    pomodoroModel->setShortBreakDuration(2);
+    pomodoroModel->setLongBreakDuration(2);
     pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
+
+//    pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
+//    pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
+//    pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
+//    pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
 
     qDebug() << "Pomodoro duration loaded",
     qDebug() <<  pomodoroModel->getPomodoroDuration();
@@ -84,6 +89,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pomodoroModel, &Pomodoro::stateChange, this, &MainWindow::modeChange);
 
     connect(pomodoroModel, &Pomodoro::stateDone, this, &MainWindow::modeDone);
+
+
+    connect(pomodoroModel, &Pomodoro::emitSaveBreak, &this->db, &Database::insertBreak);
+    connect(pomodoroModel, &Pomodoro::emitSaveFocus, &this->db, &Database::insertPomodoro);
+
+
 }
 
 

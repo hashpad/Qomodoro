@@ -2,6 +2,7 @@
 
 #include <QMediaPlayer>
 #include <QDebug>
+#include <QDate>
 
 using namespace std;
 
@@ -128,6 +129,16 @@ int Pomodoro::getShortBreakCount() const
 int Pomodoro::getMaxShortBreaks() const
 {
     return maxShortBreaks;
+}
+
+void Pomodoro::saveFocus(int length)
+{
+    emit emitSaveFocus(QDate::currentDate(), length / 60);
+}
+
+void Pomodoro::saveBreak(int length)
+{
+    emit emitSaveBreak(QDate::currentDate(), length / 60);
 }
 
 void Object::subscribeObserverFocus(LengthObserver* focus)

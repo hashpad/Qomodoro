@@ -58,6 +58,9 @@ public:
     int getShortBreakCount() const;
     int getMaxShortBreaks() const;
 
+    void saveFocus(int length);
+    void saveBreak(int length);
+
 private:
 
     PomodoroState* activeState;
@@ -76,4 +79,7 @@ private:
 signals:
     emit void stateChange();
     emit void stateDone();
+
+    emit void emitSaveBreak(QDate date, int length);
+    emit void emitSaveFocus(QDate date, int length);
 };

@@ -1,6 +1,7 @@
 #include "pomodorostate.h"
 
 #include <QDebug>
+#include <QDate>
 
 FocusState::FocusState(): PomodoroState(){
 };
@@ -15,10 +16,12 @@ void FocusState::increment()
         qDebug() << "not a long break";
         pomodoroContext->incrementShortBreakCount();
         qDebug() << "number of short breaks is " << pomodoroContext->getShortBreakCount() << "/" << pomodoroContext->getMaxShortBreaks();
+        save();
         pomodoroContext->setActiveState(new ShortBreakState());
     }else {
         pomodoroContext->resetShortBreakCount();
         qDebug() << "number of short breaks is " << pomodoroContext->getShortBreakCount() << "/" << pomodoroContext->getMaxShortBreaks();
+        save();
         pomodoroContext->setActiveState(new LongBreakState());
     }
 }
@@ -45,6 +48,11 @@ void FocusState::setPomodoroContext(Pomodoro *pomodoroContext) {
     pomodoroContext->subscribeObserverFocus(this);
 }
 
+void FocusState::save()
+{
+    pomodoroContext->saveFocus(timer->getLength());
+}
+
 ShortBreakState::ShortBreakState(): PomodoroState(){};
 
 void ShortBreakState::increment()
@@ -54,6 +62,7 @@ void ShortBreakState::increment()
         timer->increment();
     }
     else {
+        save();
         pomodoroContext->setActiveState(new FocusState());
     }
 }
@@ -79,6 +88,11 @@ void ShortBreakState::setPomodoroContext(Pomodoro *pomodoroContext) {
     pomodoroContext->subscribeObserverShortBreak(this);
 }
 
+void ShortBreakState::save()
+{
+    pomodoroContext->saveBreak(timer->getLength());
+}
+
 LongBreakState::LongBreakState(): PomodoroState(){};
 
 void LongBreakState::increment()
@@ -89,6 +103,7 @@ void LongBreakState::increment()
     }
     else {
         qDebug() << "back to focus";
+        save();
         pomodoroContext->setActiveState(new FocusState());
     }
 }
@@ -114,4 +129,9 @@ void LongBreakState::setTimer(Timer *newTimer)
 void LongBreakState::setPomodoroContext(Pomodoro *pomodoroContext) {
     this->pomodoroContext = pomodoroContext;
     pomodoroContext->subscribeObserverLongBreak(this);
+}
+
+void LongBreakState::save()
+{
+    pomodoroContext->saveBreak(timer->getLength());
 }
