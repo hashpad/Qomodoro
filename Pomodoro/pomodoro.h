@@ -55,6 +55,9 @@ public:
 
     void setMaxShortBreaks(int newMaxShortBreaks);
 
+    int getShortBreakCount() const;
+    int getMaxShortBreaks() const;
+
 private:
 
     PomodoroState* activeState;
@@ -65,7 +68,7 @@ private:
 
     QObject* parent;
 
-    int shortBreakCount = 0, maxShortBreaks = 4;
+    int shortBreakCount = 0, maxShortBreaks;
 
     int pomodoroDuration, shortBreakDuration, longBreakDuration;
 

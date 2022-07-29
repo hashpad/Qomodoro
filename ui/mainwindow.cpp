@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     // external models
     , pomodoroModel(new Pomodoro(this))
+    , db(Database())
 
     // ui elements
     , ui(new Ui::MainWindow)
@@ -18,17 +19,19 @@ MainWindow::MainWindow(QWidget *parent)
     // qt models
     , modeComboModel(createModeComboModel())
     , mediaPlayer(new QMediaPlayer(this))
+
 {
+
     qDebug() << "passed main constructor",
     ui->setupUi(this);
     qDebug() << "setup main ui",
 
     settings.beginGroup("MainWindow");
 
-
     pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
     pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
     pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
+    pomodoroModel->setMaxShortBreaks(settings.value("max_short_breaks", 2).toInt());
 
     qDebug() << "Pomodoro duration loaded",
     qDebug() <<  pomodoroModel->getPomodoroDuration();
@@ -82,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(pomodoroModel, &Pomodoro::stateDone, this, &MainWindow::modeDone);
 }
+
 
 MainWindow::~MainWindow()
 {

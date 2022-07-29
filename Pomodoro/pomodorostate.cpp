@@ -14,9 +14,11 @@ void FocusState::increment()
     else if(!pomodoroContext->isLongBreak()) {
         qDebug() << "not a long break";
         pomodoroContext->incrementShortBreakCount();
+        qDebug() << "number of short breaks is " << pomodoroContext->getShortBreakCount() << "/" << pomodoroContext->getMaxShortBreaks();
         pomodoroContext->setActiveState(new ShortBreakState());
     }else {
         pomodoroContext->resetShortBreakCount();
+        qDebug() << "number of short breaks is " << pomodoroContext->getShortBreakCount() << "/" << pomodoroContext->getMaxShortBreaks();
         pomodoroContext->setActiveState(new LongBreakState());
     }
 }
@@ -86,6 +88,7 @@ void LongBreakState::increment()
         timer->increment();
     }
     else {
+        qDebug() << "back to focus";
         pomodoroContext->setActiveState(new FocusState());
     }
 }

@@ -28,6 +28,7 @@ PomodoroState* Pomodoro::getActiveState() const {
 }
 void Pomodoro::setActiveState(PomodoroState* const newState) {
     bool done = false;
+    qDebug() << done;
 
     if(activeState) {
         qDebug() << "there is active state";
@@ -112,11 +113,21 @@ void Pomodoro::resetShortBreakCount()
 
 bool Pomodoro::isLongBreak()
 {
-    return shortBreakCount == maxShortBreaks;
+    return maxShortBreaks - shortBreakCount == 0;
 }
 
 void Pomodoro::setMaxShortBreaks(int newMaxShortBreaks) {
-    newMaxShortBreaks = newMaxShortBreaks;
+    maxShortBreaks = newMaxShortBreaks;
+}
+
+int Pomodoro::getShortBreakCount() const
+{
+    return shortBreakCount;
+}
+
+int Pomodoro::getMaxShortBreaks() const
+{
+    return maxShortBreaks;
 }
 
 void Object::subscribeObserverFocus(LengthObserver* focus)

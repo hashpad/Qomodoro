@@ -1,5 +1,6 @@
 #pragma once
 #include "Pomodoro/pomodoro.h"
+#include "Pomodoro/database.h"
 
 #include <QMainWindow>
 
@@ -64,10 +65,13 @@ private:
     QTimer* mediaQtimer;
 
     QSettings settings = QSettings("Qomodoro", "Qomodoro");
+    Database db;
+
 
     int pomodoroDuration, shortBreakDuration, longBreakDuration;
 
     QStringListModel* createModeComboModel();
+
 
 
 };
