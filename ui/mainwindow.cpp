@@ -19,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     , modeComboModel(createModeComboModel())
     , mediaPlayer(new QMediaPlayer(this))
 {
+    qDebug() << "passed main constructor",
     ui->setupUi(this);
+    qDebug() << "setup main ui",
 
     settings.beginGroup("MainWindow");
 
@@ -67,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    connect(pref, &Preferences::pomodoroDurationUpdate, this, &MainWindow::on_leftValueUpdate);
+    connect(pref, &Preferences::leftValueUpdate, this, &MainWindow::on_leftValueUpdate);
 
 
     connect(this->ui->startPauseBtn, &QPushButton::clicked, this, &MainWindow::on_startPauseBtnClicked);

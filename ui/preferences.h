@@ -27,7 +27,7 @@ public:
     void loadSettings();
 
 signals:
-    emit void pomodoroDurationUpdate();
+    emit void leftValueUpdate();
 
 private slots:
 

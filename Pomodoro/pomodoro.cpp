@@ -10,6 +10,7 @@ Pomodoro::Pomodoro(QObject* _parent):
     parent(_parent),
     isRunning(false)
 {
+    qDebug() << "created pomodoro";
 }
 
 bool Pomodoro::getIsRunning() const
@@ -28,12 +29,17 @@ PomodoroState* Pomodoro::getActiveState() const {
 void Pomodoro::setActiveState(PomodoroState* const newState) {
     bool done = false;
 
-    if(activeState)
+    if(activeState) {
+        qDebug() << "there is active state";
         done = activeState->getTimer()->getLeft() == 0;
+        qDebug() << "done";
         delete activeState;
+    }
     activeState = newState;
     activeState->setPomodoroContext(this);
+    qDebug() << "set context succe";
     activeState->setTimer(new Timer());
+    qDebug() << "set after timer succe";
     if(!done)
         emit stateChange();
     else
@@ -53,8 +59,9 @@ int Pomodoro::getPomodoroDuration() const
 void Pomodoro::setPomodoroDuration(int newPomodoroDuration)
 {
     pomodoroDuration = newPomodoroDuration;
-    if(activeState)
-        activeState->getTimer()->setLength(newPomodoroDuration);
+    if(focus) {
+        notifyObserverFocus(newPomodoroDuration);
+    }
 }
 
 int Pomodoro::getShortBreakDuration() const
@@ -65,8 +72,9 @@ int Pomodoro::getShortBreakDuration() const
 void Pomodoro::setShortBreakDuration(int newShortBreakDuration)
 {
     shortBreakDuration = newShortBreakDuration;
-    if(activeState)
-        activeState->getTimer()->setLength(newShortBreakDuration);
+    if(shortBreak){
+        notifyObserverShortBreak(newShortBreakDuration);
+    }
 }
 
 int Pomodoro::getLongBreakDuration() const
@@ -77,8 +85,9 @@ int Pomodoro::getLongBreakDuration() const
 void Pomodoro::setLongBreakDuration(int newLongBreakDuration)
 {
     longBreakDuration = newLongBreakDuration;
-    if(activeState)
-        activeState->getTimer()->setLength(newLongBreakDuration);
+    if(longBreak) {
+        notifyObserverLongBreak(newLongBreakDuration);
+    }
 }
 
 QTimer * const Pomodoro::getQTimer() const
@@ -108,4 +117,60 @@ bool Pomodoro::isLongBreak()
 
 void Pomodoro::setMaxShortBreaks(int newMaxShortBreaks) {
     newMaxShortBreaks = newMaxShortBreaks;
+}
+
+void Object::subscribeObserverFocus(LengthObserver* focus)
+{
+    this->focus = focus;
+    unsubscribeObserverShortBreak();
+    unsubscribeObserverLongBreak();
+}
+
+void Object::unsubscribeObserverFocus()
+{
+    focus = nullptr;
+}
+
+
+void Object::subscribeObserverShortBreak(LengthObserver* shortBreak)
+{
+    unsubscribeObserverFocus();
+    this->shortBreak = shortBreak;
+    unsubscribeObserverLongBreak();
+}
+
+void Object::unsubscribeObserverShortBreak()
+{
+    shortBreak = nullptr;
+}
+
+
+void Object::subscribeObserverLongBreak(LengthObserver* longBreak)
+{
+    unsubscribeObserverFocus();
+    unsubscribeObserverShortBreak();
+    this->longBreak = longBreak;
+}
+
+void Object::unsubscribeObserverLongBreak()
+{
+    longBreak = nullptr;
+}
+
+void Object::notifyObserverFocus(int newLength)
+{
+    if(focus != nullptr)
+        focus->updateLength(newLength);
+}
+
+void Object::notifyObserverShortBreak(int newLength)
+{
+    if(shortBreak != nullptr)
+        shortBreak->updateLength(newLength);
+}
+
+void Object::notifyObserverLongBreak(int newLength)
+{
+    if(longBreak != nullptr)
+        longBreak->updateLength(newLength);
 }

@@ -5,6 +5,7 @@ Preferences::Preferences(QWidget *parent, Pomodoro* pomodoroModel) :
     QDialog(parent),
     ui(new Ui::Preferences)
 {
+    qDebug() << "started creating prefs successfully";
     ui->setupUi(this);
     setWindowTitle("Preferences");
 
@@ -20,6 +21,7 @@ Preferences::Preferences(QWidget *parent, Pomodoro* pomodoroModel) :
 
     connect(ui->longBreakDurationSlider, &QSlider::sliderMoved, this, &Preferences::on_longBreakDurationSliderMoved);
     connect(ui->longBreakDurationSlider, &QSlider::sliderReleased, this, &Preferences::on_longBreakDurationSliderReleased);
+    qDebug() << "finished creating prefs successfully";
 }
 
 Preferences::~Preferences()
@@ -49,8 +51,13 @@ void Preferences::setPomodoroModel(Pomodoro *newPomodoroModel)
 }
 
 void Preferences::updatePomodoroDuration(int value) {
+    qDebug() << "trying duration";
     pomodoroModel->setPomodoroDuration(value*60);
+    qDebug() << "updated duration";
     updatePomodoroDurationLbl(value);
+    qDebug() << "updated label";
+    emit leftValueUpdate();
+    qDebug() << "emitted";
 }
 void Preferences::on_pomodoroDurationSliderReleased()
 {
@@ -65,8 +72,13 @@ void Preferences::on_pomodoroDurationSliderMoved(int value)
 }
 
 void Preferences::updateShortBreakDuration(int value) {
+    qDebug() << "trying duration";
     pomodoroModel->setShortBreakDuration(value*60);
+    qDebug() << "updated duration";
     updateShortBreakDurationLbl(value);
+    qDebug() << "updated label";
+    emit leftValueUpdate();
+    qDebug() << "emitted";
 }
 void Preferences::on_shortBreakDurationSliderReleased()
 {
@@ -82,6 +94,7 @@ void Preferences::on_shortBreakDurationSliderMoved(int value)
 void Preferences::updateLongBreakDuration(int value) {
     pomodoroModel->setLongBreakDuration(value*60);
     updateLongBreakDurationLbl(value);
+    emit leftValueUpdate();
 }
 void Preferences::on_longBreakDurationSliderReleased()
 {

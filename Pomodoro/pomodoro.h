@@ -7,7 +7,27 @@ class FocusState;
 class ShortBreakState;
 class LongBreakState;
 
-class Pomodoro : public QObject {
+class LengthObserver;
+class Object {
+public:
+    void subscribeObserverFocus(LengthObserver* focus);
+    void unsubscribeObserverFocus();
+    void notifyObserverFocus(int newLength);
+
+    void subscribeObserverShortBreak(LengthObserver* shortBreak);
+    void unsubscribeObserverShortBreak();
+    void notifyObserverShortBreak(int newLength);
+
+    void subscribeObserverLongBreak(LengthObserver* longBreak);
+    void unsubscribeObserverLongBreak();
+    void notifyObserverLongBreak(int newLength);
+protected:
+    LengthObserver* focus = nullptr;
+    LengthObserver* shortBreak = nullptr;
+    LengthObserver* longBreak = nullptr;
+};
+
+class Pomodoro : public QObject, public Object {
 Q_OBJECT
 public:
     Pomodoro(QObject* _parent);

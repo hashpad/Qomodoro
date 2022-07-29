@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-FocusState::FocusState(): PomodoroState(){};
+FocusState::FocusState(): PomodoroState(){
+};
 
 void FocusState::increment()
 {
@@ -35,6 +36,13 @@ void FocusState::setTimer(Timer *newTimer)
     if(pomodoroContext)
         timer->setLength(pomodoroContext->getPomodoroDuration());
 }
+
+void FocusState::setPomodoroContext(Pomodoro *pomodoroContext) {
+    this->pomodoroContext = pomodoroContext;
+    qDebug() << "there i state";
+    pomodoroContext->subscribeObserverFocus(this);
+}
+
 ShortBreakState::ShortBreakState(): PomodoroState(){};
 
 void ShortBreakState::increment()
@@ -63,6 +71,12 @@ void ShortBreakState::setTimer(Timer *newTimer)
     if(pomodoroContext)
         timer->setLength(pomodoroContext->getShortBreakDuration());
 }
+
+void ShortBreakState::setPomodoroContext(Pomodoro *pomodoroContext) {
+    this->pomodoroContext = pomodoroContext;
+    pomodoroContext->subscribeObserverShortBreak(this);
+}
+
 LongBreakState::LongBreakState(): PomodoroState(){};
 
 void LongBreakState::increment()
@@ -92,4 +106,9 @@ void LongBreakState::setTimer(Timer *newTimer)
     timer = newTimer;
     if(pomodoroContext)
         timer->setLength(pomodoroContext->getLongBreakDuration());
+}
+
+void LongBreakState::setPomodoroContext(Pomodoro *pomodoroContext) {
+    this->pomodoroContext = pomodoroContext;
+    pomodoroContext->subscribeObserverLongBreak(this);
 }
