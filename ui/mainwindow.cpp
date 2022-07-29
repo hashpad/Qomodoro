@@ -5,56 +5,73 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , pomodoroModel(new Pomodoro(this, false, new FocusState(new Timer(60, 0))))
+    // external models
+    , pomodoroModel(new Pomodoro(this))
 
+    // ui elements
     , ui(new Ui::MainWindow)
     , pref(new Preferences(this, pomodoroModel))
 
+    // qt models
     , modeComboModel(createModeComboModel())
     , mediaPlayer(new QMediaPlayer(this))
 {
     ui->setupUi(this);
 
+    settings.beginGroup("MainWindow");
 
 
-    QBarSet *set0 = new QBarSet("today");
+    pomodoroModel->setPomodoroDuration(settings.value("pomodoro_duration", 25).toInt() * 60);
+    pomodoroModel->setShortBreakDuration(settings.value("short_break_duration", 5).toInt() * 60);
+    pomodoroModel->setLongBreakDuration(settings.value("long_break_duration", 30).toInt() * 60);
 
-    *set0 << 39 << 5;
+    qDebug() << "Pomodoro duration loaded",
+    qDebug() <<  pomodoroModel->getPomodoroDuration();
 
-    QBarSeries *series = new QBarSeries();
-    series->append(set0);
 
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-    QStringList categories;
-    categories << "Pomodoro" << "Break";
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
+    pomodoroModel->setActiveState(new FocusState());
 
-    QValueAxis *axisY = new QValueAxis();
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
+    qDebug() <<  "focus state set";
 
-    chart->legend()->setVisible(false);
+//    QBarSet *set0 = new QBarSet("today");
 
-    ui->chartView->setChart(chart);
-    ui->chartView->setRenderHint(QPainter::Antialiasing);
+//    *set0 << 39 << 5;
+
+//    QBarSeries *series = new QBarSeries(ui->chartView);
+//    series->append(set0);
+
+//    QChart *chart = new QChart();
+//    chart->addSeries(series);
+//    chart->setAnimationOptions(QChart::SeriesAnimations);
+//    QStringList categories;
+//    categories << "Pomodoro" << "Break";
+//    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+//    axisX->append(categories);
+//    chart->addAxis(axisX, Qt::AlignBottom);
+//    series->attachAxis(axisX);
+
+//    QValueAxis *axisY = new QValueAxis();
+//    chart->addAxis(axisY, Qt::AlignLeft);
+//    series->attachAxis(axisY);
+
+//    chart->legend()->setVisible(false);
+
+//    ui->chartView->setChart(chart);
+//    ui->chartView->setRenderHint(QPainter::Antialiasing);
 
     ui->modeCombo->setModel(modeComboModel);
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 
 
 
-
-    connect(pref, &Preferences::leftValueUpdate, this, &MainWindow::on_leftValueUpdate);
+    connect(pref, &Preferences::pomodoroDurationUpdate, this, &MainWindow::on_leftValueUpdate);
 
 
     connect(this->ui->startPauseBtn, &QPushButton::clicked, this, &MainWindow::on_startPauseBtnClicked);
+
     connect(this->ui->stopBtn, &QPushButton::clicked, this, &MainWindow::on_stopBtnClicked);
     connect(this->ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::on_settingsBtnClicked);
     connect(this->ui->modeCombo, &QComboBox::currentTextChanged, this, &MainWindow::on_modeComboCurrentTextChanged);
@@ -124,7 +141,7 @@ void MainWindow::incrementTimer() {
 
 void MainWindow::on_stopBtnClicked()
 {
-  this->stopPomodoro();
+    this->stopPomodoro();
 }
 
 
@@ -132,10 +149,12 @@ void MainWindow::update_leftLabel() {
     ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
 }
 void MainWindow::update_modeCombo() {
+    ui->modeCombo->blockSignals(true);
     ui->modeCombo->setCurrentText(QString::fromStdString(this->pomodoroModel->getActiveState()->getName()));
+    ui->modeCombo->blockSignals(false);
 }
 void MainWindow::on_leftValueUpdate() {
-    ui->leftTimeLbl->setText(QString::fromStdString(this->pomodoroModel->getActiveState()->getTimer()->getLeftString()));
+    update_leftLabel();
 }
 
 void MainWindow::on_settingsBtnClicked()
@@ -158,12 +177,16 @@ QStringListModel* MainWindow::createModeComboModel() {
 
 void MainWindow::on_modeComboCurrentTextChanged(const QString &state)
 {
-    if(state == QString::fromStdString(ShortBreakState::getStaticName()))
-        pomodoroModel->setActiveState(new ShortBreakState(new Timer(300, 0)));
+    if(state == QString::fromStdString(ShortBreakState::getStaticName())) {
+        pomodoroModel->setActiveState(new ShortBreakState());
+        qDebug() <<  "Short break set";
+        qDebug() <<  pomodoroModel->getShortBreakDuration();
+        qDebug() <<  QString::fromStdString(pomodoroModel->getActiveState()->getTimer()->getLeftString());
+    }
     else if(state == QString::fromStdString(LongBreakState::getStaticName()))
-        pomodoroModel->setActiveState(new LongBreakState(new Timer(600, 0)));
+        pomodoroModel->setActiveState(new LongBreakState());
     else
-        pomodoroModel->setActiveState(new FocusState(new Timer(2, 0)));
+        pomodoroModel->setActiveState(new FocusState());
 }
 void MainWindow::startMedia(int playFor) {
     mediaQtimer = new QTimer(this);
@@ -178,17 +201,23 @@ void MainWindow::startMedia(int playFor) {
 }
 
 void MainWindow::stopMedia() {
-    mediaQtimer->stop();
     mediaPlayer->stop();
     delete mediaPlayer->audioOutput();
+
+    mediaQtimer->stop();
+    delete mediaQtimer;
 }
 
 void MainWindow::modeDone() {
     modeChange();
-    this->raise();
-    startMedia(10000);
+    triggerNotification();
+    startMedia(10000); // play media for x ms
 }
 void MainWindow::modeChange() {
     update_modeCombo();
     update_leftLabel();
+}
+
+void MainWindow::exit() {
+    settings.endGroup();
 }

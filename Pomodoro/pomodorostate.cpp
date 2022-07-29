@@ -1,15 +1,22 @@
 #include "pomodorostate.h"
 
+#include <QDebug>
 
-FocusState::FocusState(Timer* timer): PomodoroState(timer){};
+FocusState::FocusState(): PomodoroState(){};
 
 void FocusState::increment()
 {
+    if(!pomodoroContext) return;
     if(timer->getCurrent() < timer->getLength()) {
         timer->increment();
     }
-    else {
-        pomodoroContext->setActiveState(new ShortBreakState(new Timer(300, 0)));
+    else if(!pomodoroContext->isLongBreak()) {
+        qDebug() << "not a long break";
+        pomodoroContext->incrementShortBreakCount();
+        pomodoroContext->setActiveState(new ShortBreakState());
+    }else {
+        pomodoroContext->resetShortBreakCount();
+        pomodoroContext->setActiveState(new LongBreakState());
     }
 }
 string FocusState::getName() const
@@ -21,12 +28,24 @@ string FocusState::getStaticName()
 {
     return "Pomodoro";
 }
-ShortBreakState::ShortBreakState(Timer* timer): PomodoroState(timer){};
+
+void FocusState::setTimer(Timer *newTimer)
+{
+    timer = newTimer;
+    if(pomodoroContext)
+        timer->setLength(pomodoroContext->getPomodoroDuration());
+}
+ShortBreakState::ShortBreakState(): PomodoroState(){};
 
 void ShortBreakState::increment()
 {
-    if(timer->getCurrent() < timer->getLength())
+    if(!pomodoroContext) return;
+    if(timer->getCurrent() < timer->getLength()) {
         timer->increment();
+    }
+    else {
+        pomodoroContext->setActiveState(new FocusState());
+    }
 }
 
 string ShortBreakState::getName() const
@@ -38,12 +57,23 @@ string ShortBreakState::getStaticName()
 {
     return "Short break";
 }
-LongBreakState::LongBreakState(Timer* timer): PomodoroState(timer){};
+void ShortBreakState::setTimer(Timer *newTimer)
+{
+    timer = newTimer;
+    if(pomodoroContext)
+        timer->setLength(pomodoroContext->getShortBreakDuration());
+}
+LongBreakState::LongBreakState(): PomodoroState(){};
 
 void LongBreakState::increment()
 {
-    if(timer->getCurrent() < timer->getLength())
+    if(!pomodoroContext) return;
+    if(timer->getCurrent() < timer->getLength()) {
         timer->increment();
+    }
+    else {
+        pomodoroContext->setActiveState(new FocusState());
+    }
 }
 
 
@@ -55,4 +85,11 @@ string LongBreakState::getName() const
 string LongBreakState::getStaticName()
 {
     return "Long break";
+}
+
+void LongBreakState::setTimer(Timer *newTimer)
+{
+    timer = newTimer;
+    if(pomodoroContext)
+        timer->setLength(pomodoroContext->getLongBreakDuration());
 }

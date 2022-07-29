@@ -6,12 +6,10 @@
 using namespace std;
 
 
-Pomodoro::Pomodoro(QObject* _parent, bool isRunning, PomodoroState* activeState):
+Pomodoro::Pomodoro(QObject* _parent):
     parent(_parent),
-    isRunning(isRunning),
-    activeState(activeState)
+    isRunning(false)
 {
-    this->activeState->setPomodoroContext(this);
 }
 
 bool Pomodoro::getIsRunning() const
@@ -28,13 +26,14 @@ PomodoroState* Pomodoro::getActiveState() const {
     return activeState;
 }
 void Pomodoro::setActiveState(PomodoroState* const newState) {
-    bool done = activeState->getTimer()->getLeft() == 0;
-    qDebug() << done;
+    bool done = false;
 
     if(activeState)
+        done = activeState->getTimer()->getLeft() == 0;
         delete activeState;
     activeState = newState;
     activeState->setPomodoroContext(this);
+    activeState->setTimer(new Timer());
     if(!done)
         emit stateChange();
     else
@@ -46,6 +45,42 @@ Pomodoro::~Pomodoro() {
     delete qTimer;
 }
 
+int Pomodoro::getPomodoroDuration() const
+{
+    return pomodoroDuration;
+}
+
+void Pomodoro::setPomodoroDuration(int newPomodoroDuration)
+{
+    pomodoroDuration = newPomodoroDuration;
+    if(activeState)
+        activeState->getTimer()->setLength(newPomodoroDuration);
+}
+
+int Pomodoro::getShortBreakDuration() const
+{
+    return shortBreakDuration;
+}
+
+void Pomodoro::setShortBreakDuration(int newShortBreakDuration)
+{
+    shortBreakDuration = newShortBreakDuration;
+    if(activeState)
+        activeState->getTimer()->setLength(newShortBreakDuration);
+}
+
+int Pomodoro::getLongBreakDuration() const
+{
+    return longBreakDuration;
+}
+
+void Pomodoro::setLongBreakDuration(int newLongBreakDuration)
+{
+    longBreakDuration = newLongBreakDuration;
+    if(activeState)
+        activeState->getTimer()->setLength(newLongBreakDuration);
+}
+
 QTimer * const Pomodoro::getQTimer() const
 {
     return this->qTimer;
@@ -55,4 +90,22 @@ void Pomodoro::setQTimer(QTimer *newQTimer)
 {
 
     this->qTimer = newQTimer;
+}
+
+void Pomodoro::incrementShortBreakCount()
+{
+    ++shortBreakCount;
+}
+void Pomodoro::resetShortBreakCount()
+{
+    shortBreakCount = 0;
+}
+
+bool Pomodoro::isLongBreak()
+{
+    return shortBreakCount == maxShortBreaks;
+}
+
+void Pomodoro::setMaxShortBreaks(int newMaxShortBreaks) {
+    newMaxShortBreaks = newMaxShortBreaks;
 }

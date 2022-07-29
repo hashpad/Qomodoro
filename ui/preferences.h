@@ -3,6 +3,7 @@
 #include "Pomodoro/pomodoro.h"
 
 #include <QDialog>
+#include <QSettings>
 
 namespace Ui {
 class Preferences;
@@ -22,17 +23,42 @@ public:
     void setUi(Ui::Preferences *newUi);
     void setPomodoroModel(Pomodoro *newPomodoroModel);
 
+    void saveSettings();
+    void loadSettings();
+
 signals:
-    emit void leftValueUpdate();
+    emit void pomodoroDurationUpdate();
 
 private slots:
-    void on_horizontalSliderValueChanged(int value);
 
+
+    void on_pomodoroDurationSliderMoved(int value);
+    void on_pomodoroDurationSliderReleased();
+
+
+    void on_shortBreakDurationSliderMoved(int value);
+    void on_shortBreakDurationSliderReleased();
+
+    void on_longBreakDurationSliderMoved(int value);
+    void on_longBreakDurationSliderReleased();
+
+    void on_pomodorosB4LongBreakValueChanged(int value);
 
 private:
     Ui::Preferences *ui;
 
     Pomodoro* pomodoroModel;
 
-    void updatePomodoroDurationLbl();
+    QSettings settings;
+
+    void updatePomodoroDurationLbl(int value);
+    void updatePomodoroDuration(int value);
+
+    void updateShortBreakDurationLbl(int value);
+    void updateShortBreakDuration(int value);
+
+    void updateLongBreakDurationLbl(int value);
+    void updateLongBreakDuration(int value);
+
+    void updatePomodorosB4LongBreak(int value);
 };

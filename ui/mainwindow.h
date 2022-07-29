@@ -10,6 +10,8 @@
 #include <QPieSeries>
 #include <QPieSlice>
 
+#include <QSettings>
+
 
 #include "preferences.h"
 
@@ -23,6 +25,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    void exit();
     ~MainWindow();
 
 private slots:
@@ -60,7 +63,9 @@ private:
     QMediaPlayer* mediaPlayer;
     QTimer* mediaQtimer;
 
+    QSettings settings = QSettings("Qomodoro", "Qomodoro");
 
+    int pomodoroDuration, shortBreakDuration, longBreakDuration;
 
     QStringListModel* createModeComboModel();
 

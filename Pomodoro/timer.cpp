@@ -70,6 +70,6 @@ Timer::~Timer()
 {
 }
 
-Timer::Timer(int length, int current) : length(length),
-    current(current)
+Timer::Timer():
+    current(0)
 {}

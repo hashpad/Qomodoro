@@ -6,7 +6,7 @@ using namespace std;
 
 class Timer {
 public:
-    Timer(int length, int current);
+    Timer();
 
     int getLength() const;
     void setLength(int newLength);
@@ -30,5 +30,5 @@ public:
 
 private:
     int length;
-    int current;
+    int current = 0;
 };

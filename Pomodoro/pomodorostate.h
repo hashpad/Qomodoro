@@ -10,7 +10,7 @@ using namespace std;
 class Pomodoro;
 class PomodoroState {
 public:
-    PomodoroState(Timer* timer) : timer(timer) {};
+    PomodoroState() {};
 
     Timer* getTimer() const {
         return timer;
@@ -23,6 +23,9 @@ public:
     virtual ~PomodoroState() {
         delete timer;
     };
+    virtual void setTimer(Timer* newTimer) {
+        timer = newTimer;
+    };
 protected:
     std::string name;
     Timer* timer;
@@ -31,24 +34,29 @@ protected:
 class FocusState : public PomodoroState {
     // PomodoroState interface
 public:
-    FocusState(Timer* timer);
+    FocusState();
     void increment() override;
     string getName() const override;
     static string getStaticName();
+    void setTimer(Timer* newTimer) override;
 };
 class ShortBreakState : public PomodoroState {
     // PomodoroState interface
 public:
-    ShortBreakState(Timer* timer);
+    ShortBreakState();
     void increment() override;
     string getName() const override;
     static string getStaticName();
+    void setTimer(Timer* newTimer) override;
 };
 class LongBreakState : public PomodoroState {
     // PomodoroState interface
 public:
-    LongBreakState(Timer* timer);
+    LongBreakState();
     void increment() override;
     string getName() const override;
     static string getStaticName();
+    void setTimer(Timer* newTimer) override;
+
+
 };
