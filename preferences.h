@@ -23,6 +23,9 @@ public:
     ~Preferences();
 
 private slots:
+    void on_pmCycles_valueChanged(int arg1);
+
+private slots:
     void on_pmDurationSlider_valueChanged(int value);
 
     void on_breakDurationSlider_valueChanged(int value);
@@ -30,7 +33,8 @@ private slots:
     void on_longBreakDurationSlider_valueChanged(int value);
 
 signals:
-    void update();
+    void update_stopwatch();
+    void update_cycles();
 private:
     Ui::Preferences *ui;
     Pomodoro *pm;

@@ -11,8 +11,11 @@ public:
     void dec();
     QString as_string();
     void set_value(const int value);
+    int get_value();
+    int get_save();
 private:
     int value;
+    int save;
 
 signals:
     void change_state();

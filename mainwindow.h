@@ -5,6 +5,7 @@
 #include "preferences.h"
 #include "pomodoro.h"
 #include "stopwatch.h"
+#include "database.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,12 +36,14 @@ private slots:
 
     void reset();
 
-    void update();
+    void update_cycles();
+    void update_stopwatch();
 
 private:
     Ui::MainWindow *ui;
     Preferences* pref;
     Pomodoro* pm;
     Stopwatch* sw;
+    Database* db;
 };
 #endif // MAINWINDOW_H

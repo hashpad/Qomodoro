@@ -53,3 +53,10 @@ void Preferences::on_longBreakDurationSlider_valueChanged(int value)
     emit update();
 }
 
+
+void Preferences::on_pmCycles_valueChanged(int value)
+{
+    pm->set_cycles(value);
+    emit update_cycles();
+}
+

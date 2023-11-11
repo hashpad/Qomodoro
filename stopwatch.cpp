@@ -25,4 +25,6 @@ QString Stopwatch::as_string() {
     return str;
 }
 
-void Stopwatch::set_value(const int value) {this->value = value;}
+void Stopwatch::set_value(const int value) {this->value = value; this->save = value; }
+int Stopwatch::get_value() {return this->value;}
+int Stopwatch::get_save() {return this->save;}

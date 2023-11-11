@@ -1,9 +1,10 @@
 #include "pomodoro.h"
 #include <QDebug>
+#include <QDate>
 
 
-Pomodoro::Pomodoro(QObject *parent, Stopwatch* sw, int pm_duration, int break_duration, int long_break_duration, int cycles)
-    : QObject{parent}, sw(sw), pm_duration(pm_duration), break_duration(break_duration), long_break_duration(long_break_duration), cycles(cycles)
+Pomodoro::Pomodoro(QObject *parent, Stopwatch* sw, int pm_duration, int break_duration, int long_break_duration, int cycles, Database* db)
+    : QObject{parent}, sw(sw), pm_duration(pm_duration), break_duration(break_duration), long_break_duration(long_break_duration), cycles(cycles), db(db)
 {
     this->state = PomodoroState::PM;
     this->sw->set_value(pm_duration);
@@ -27,9 +28,12 @@ void Pomodoro::set_pm_duration(int value) { this->pm_duration = value;  reset_st
 void Pomodoro::set_break_duration(int value) { this->break_duration = value; reset_stopwatch(); }
 void Pomodoro::set_long_break_duration(int value) { this->long_break_duration = value; reset_stopwatch(); }
 void Pomodoro::set_cycles(int value) { this->cycles = value; }
+void Pomodoro::set_db(Database* db) { this->db = db; }
 
 PomodoroState Pomodoro::change_state() {
+    auto last_sw_value = this->sw->get_save();
     if(this->state == PM) {
+        this->db->add_pomodoro(last_sw_value, QDate::currentDate());
         if(current_cycle == cycles) {
             this->state = LB;
             this->current_cycle = 0;
@@ -39,6 +43,7 @@ PomodoroState Pomodoro::change_state() {
             ++this->current_cycle;
         }
     } else {
+        this->db->add_break(last_sw_value, QDate::currentDate());
         this->state = PM;
     }
     this->reset_stopwatch();
@@ -59,6 +64,9 @@ void Pomodoro::set_state(PomodoroState ps) {
         this->current_cycle = 0;
     }
     this->reset_stopwatch();
+}
+PomodoroState Pomodoro::get_state() {
+    return this->state;
 }
 
 void Pomodoro::reset_stopwatch() {
