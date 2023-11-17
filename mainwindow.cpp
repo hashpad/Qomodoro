@@ -1,7 +1,6 @@
 #include <QTimer>
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <QtCharts>
 
 enum Tools { PREF = 1, ABOUT = 2, QUIT = 3 };
 MainWindow::MainWindow(QWidget *parent)
@@ -17,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    pref = new Preferences(this, pm);
+    pref = new Preferences(this, pm, db);
 
 
     pm->set_pm_duration(pref->get_pm_duration());
@@ -35,28 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pref, &Preferences::update_stopwatch, this, &MainWindow::update_stopwatch);
     connect(pref, &Preferences::update_cycles, this, &MainWindow::update_cycles);
 
-    QBarSet *set0 = new QBarSet("Value");
+    chart = new Chart(this, db);
 
-    *set0 << 1 << 2;
-
-    QBarSeries *series = new QBarSeries();
-    series->append(set0);
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-    QStringList categories;
-    categories << "Pomodoro" << "Break";
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
-
-    QValueAxis *axisY = new QValueAxis();
-    axisY->setRange(0,15);
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-
-    ui->chartView->setChart(chart);
+    ui->dayChartView->setChart(chart->get_day_view_chart());
+    ui->weekChartView->setChart(chart->get_week_view_chart());
+    ui->monthChartView->setChart(chart->get_month_view_chart());
 }
 
 
@@ -65,7 +47,9 @@ MainWindow::~MainWindow()
     delete pref;
     delete pm;
     delete sw;
+    delete db;
     delete ui;
+    delete chart;
 }
 
 
@@ -129,5 +113,60 @@ void MainWindow::on_changeState_currentIndexChanged(int index)
     this->pm->set_state((PomodoroState)index);
     this->update_stopwatch();
     this->update_cycles();
+}
+
+
+
+
+void MainWindow::on_prevDay_clicked()
+{
+    this->chart->set_day_offset(this->chart->get_day_offset() - 1);
+    ui->dayChartView->setChart(chart->get_day_view_chart());
+    ui->dayNameLabel->setText(this->chart->get_day_name());
+    ui->nextDay->setEnabled(this->chart->get_day_offset());
+}
+void MainWindow::on_nextDay_clicked()
+{
+    this->chart->set_day_offset(this->chart->get_day_offset() + 1);
+    ui->dayChartView->setChart(chart->get_day_view_chart());
+    ui->dayNameLabel->setText(this->chart->get_day_name());
+    ui->nextDay->setEnabled(this->chart->get_day_offset());
+}
+
+
+
+void MainWindow::on_prevWeek_clicked()
+{
+    this->chart->set_week_offset(this->chart->get_week_offset() - 1);
+    ui->weekChartView->setChart(chart->get_week_view_chart());
+    ui->weekNameLabel->setText(this->chart->get_week_name());
+    ui->nextWeek->setEnabled(this->chart->get_week_offset());
+}
+
+
+void MainWindow::on_nextWeek_clicked()
+{
+    this->chart->set_week_offset(this->chart->get_week_offset() + 1);
+    ui->weekChartView->setChart(chart->get_week_view_chart());
+    ui->weekNameLabel->setText(this->chart->get_week_name());
+    ui->nextWeek->setEnabled(this->chart->get_week_offset());
+}
+
+
+void MainWindow::on_prevMonth_clicked()
+{
+    this->chart->set_month_offset(this->chart->get_month_offset() - 1);
+    ui->monthChartView->setChart(chart->get_month_view_chart());
+    ui->monthNameLabel->setText(this->chart->get_month_name());
+    ui->nextMonth->setEnabled(this->chart->get_month_offset());
+}
+
+
+void MainWindow::on_nextMonth_clicked()
+{
+    this->chart->set_month_offset(this->chart->get_month_offset() + 1);
+    ui->monthChartView->setChart(chart->get_month_view_chart());
+    ui->monthNameLabel->setText(this->chart->get_month_name());
+    ui->nextMonth->setEnabled(this->chart->get_month_offset());
 }
 

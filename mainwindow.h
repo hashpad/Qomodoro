@@ -6,6 +6,7 @@
 #include "pomodoro.h"
 #include "stopwatch.h"
 #include "database.h"
+#include "chart.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,6 +21,24 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    void on_nextMonth_clicked();
+
+private slots:
+    void on_prevMonth_clicked();
+
+private slots:
+    void on_nextWeek_clicked();
+
+private slots:
+    void on_prevWeek_clicked();
+
+
+private slots:
+    void on_prevDay_clicked();
+    void on_nextDay_clicked();
+
 
 private slots:
     void on_changeState_currentIndexChanged(int index);
@@ -45,5 +64,6 @@ private:
     Pomodoro* pm;
     Stopwatch* sw;
     Database* db;
+    Chart* chart;
 };
 #endif // MAINWINDOW_H

@@ -27,6 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         stopwatch.h stopwatch.cpp
         pomodoro.h pomodoro.cpp
         database.h database.cpp
+        chart.h chart.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Qomodoro APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

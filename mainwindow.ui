@@ -66,7 +66,7 @@
 }</string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="timerTab">
          <attribute name="title">
@@ -330,7 +330,7 @@
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_7">
                     <item>
-                     <widget class="QPushButton" name="pushButton">
+                     <widget class="QPushButton" name="prevDay">
                       <property name="maximumSize">
                        <size>
                         <width>100</width>
@@ -343,14 +343,17 @@
                      </widget>
                     </item>
                     <item alignment="Qt::AlignHCenter">
-                     <widget class="QLabel" name="label">
+                     <widget class="QLabel" name="dayNameLabel">
                       <property name="text">
                        <string>Today</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="nextDay">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>100</width>
@@ -365,7 +368,7 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="QChartView" name="chartView"/>
+                   <widget class="QChartView" name="dayChartView"/>
                   </item>
                  </layout>
                 </item>
@@ -375,11 +378,109 @@
                <attribute name="title">
                 <string>Week</string>
                </attribute>
+               <layout class="QGridLayout" name="gridLayout_10">
+                <item row="0" column="0">
+                 <layout class="QVBoxLayout" name="verticalLayout_7">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <item>
+                     <widget class="QPushButton" name="prevWeek">
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>prev</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item alignment="Qt::AlignHCenter">
+                     <widget class="QLabel" name="weekNameLabel">
+                      <property name="text">
+                       <string>This week</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="nextWeek">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>next</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QChartView" name="weekChartView"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </widget>
               <widget class="QWidget" name="monthTab">
                <attribute name="title">
                 <string>Month</string>
                </attribute>
+               <layout class="QGridLayout" name="gridLayout_7">
+                <item row="0" column="0">
+                 <layout class="QVBoxLayout" name="verticalLayout_6">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_8">
+                    <item>
+                     <widget class="QPushButton" name="prevMonth">
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>prev</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item alignment="Qt::AlignHCenter">
+                     <widget class="QLabel" name="monthNameLabel">
+                      <property name="text">
+                       <string>November 2023</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="nextMonth">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>100</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>next</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QChartView" name="monthChartView"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </widget>
              </widget>
             </item>

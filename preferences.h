@@ -14,13 +14,14 @@ class Preferences : public QDialog
     Q_OBJECT
 
 public:
-    explicit Preferences(QWidget *parent = nullptr, Pomodoro* pm = nullptr);
+    explicit Preferences(QWidget *parent = nullptr, Pomodoro* pm = nullptr, Database* db = nullptr);
     int get_pm_duration();
     int get_break_duration();
     int get_long_break_duration();
     int get_cycles();
 
     ~Preferences();
+
 
 private slots:
     void on_pmCycles_valueChanged(int arg1);
@@ -38,6 +39,7 @@ signals:
 private:
     Ui::Preferences *ui;
     Pomodoro *pm;
+    Database *db;
 
     QString format_minutes(int value);
 };

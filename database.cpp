@@ -19,6 +19,7 @@ Database::Database(QObject *parent, const QString &path)
 }
 
 
+
 bool Database::add(int duration, QDate day, QString &type) {
     QSqlQuery query;
     query.prepare("SELECT * FROM " + type + " WHERE date = (:day)");
@@ -50,4 +51,41 @@ bool Database::add_break(int duration, QDate day) {
 bool Database::add_pomodoro(int duration, QDate day) {
     QString type("pomodoros");
     return this->add(duration, day, type);
+}
+
+int Database::get_breaks(QDate day) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM breaks WHERE date = (:day)");
+    query.bindValue(":day", day.toString());
+    if(query.exec()) {
+        if(query.next()) {
+            return query.record().value("duration").toInt();
+        }else {
+            return 0;
+        }
+    }else {
+        qInfo() << "Error: " << query.lastError();
+    }
+    return 0;
+}
+
+int Database::get_pomodoros(QDate day) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM pomodoros WHERE date = (:day)");
+    query.bindValue(":day", day.toString());
+    if(query.exec()) {
+        if(query.next()) {
+            return query.record().value("duration").toInt();
+        }else {
+            return 0;
+        }
+    }else {
+        qInfo() << "Error: " << query.lastError();
+    }
+    return 0;
+}
+
+bool Database::set_pm_duration(int duration) {
+
+    return true;
 }

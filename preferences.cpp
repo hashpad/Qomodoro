@@ -1,10 +1,11 @@
 #include "preferences.h"
 #include "ui_preferences.h"
 
-Preferences::Preferences(QWidget *parent, Pomodoro* pm)
+Preferences::Preferences(QWidget *parent, Pomodoro* pm, Database* db)
     : QDialog(parent)
     , ui(new Ui::Preferences)
     , pm(pm)
+    , db(db)
 {
     ui->setupUi(this);
 }
@@ -34,6 +35,7 @@ void Preferences::on_pmDurationSlider_valueChanged(int value)
 {
     ui->pmDurationLabel->setText(this->format_minutes(value));
     pm->set_pm_duration(value*60);
+    db->set_pm_duration(value);
     emit update();
 }
 
@@ -59,4 +61,6 @@ void Preferences::on_pmCycles_valueChanged(int value)
     pm->set_cycles(value);
     emit update_cycles();
 }
+
+
 
