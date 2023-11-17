@@ -26,19 +26,19 @@ bool Database::add(int duration, QDate day, QString &type) {
     query.bindValue(":day", day.toString());
     if(query.exec()) {
         if(query.next()) {
-          int id = query.record().value("ids").toInt();
-          int old_duration = query.record().value("duration").toInt();
-          query.prepare("UPDATE " + type + " SET duration = (:duration) WHERE ids = (:id)");
-          query.bindValue(":duration", old_duration + duration);
-          query.bindValue(":id", id);
-          if(query.exec()) return true;
-          else qInfo() << "Error" << query.lastError();
+            int id = query.record().value("ids").toInt();
+            int old_duration = query.record().value("duration").toInt();
+            query.prepare("UPDATE " + type + " SET duration = (:duration) WHERE ids = (:id)");
+            query.bindValue(":duration", old_duration + duration);
+            query.bindValue(":id", id);
+            if(query.exec()) return true;
+            else qInfo() << "Error" << query.lastError();
         }else {
-          query.prepare("INSERT INTO " + type + " (duration, date) VALUES (:duration, :day)");
-          query.bindValue(":duration", duration);
-          query.bindValue(":day", day.toString());
-          if(query.exec()) return true;
-          else qInfo() << "Error" << query.lastError();
+            query.prepare("INSERT INTO " + type + " (duration, date) VALUES (:duration, :day)");
+            query.bindValue(":duration", duration);
+            query.bindValue(":day", day.toString());
+            if(query.exec()) return true;
+            else qInfo() << "Error" << query.lastError();
         }
     }
     else qInfo() << "Error" << query.lastError();
@@ -85,7 +85,185 @@ int Database::get_pomodoros(QDate day) {
     return 0;
 }
 
-bool Database::set_pm_duration(int duration) {
+bool Database::prepare_config() {
 
-    return true;
+    QSqlQuery query;
+    QString into("duration, ");
+    into.append("break_duration, ");
+    into.append("long_break_duration, ");
+    into.append("pomodoros_b4_long_break, ");
+    into.append("ticking_sound, ");
+    into.append("notify, ");
+    // into.append("start_break_sound, ");
+    // into.append("end_break_sound, ");
+    into.append("hide_other_notifications");
+
+    query.prepare("INSERT INTO config ("+into+") VALUES (1500, 300, 600, 5, 0, 1, 0)");
+    if(query.exec()) return true;
+    else qInfo() << query.lastError();
+    return false;
+}
+bool Database::set_pm_duration(int duration) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET duration = (:duration) WHERE ids= 1");
+          query.bindValue(":duration", duration);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+int Database::get_pm_duration() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_pm_duration();
+        } else {
+          int ret = query.record().value("duration").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_break_duration(int duration) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET break_duration = (:duration) WHERE ids= 1");
+          query.bindValue(":duration", duration);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+int Database::get_break_duration() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_break_duration();
+        } else {
+          int ret = query.record().value("break_duration").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_long_break_duration(int duration) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET long_break_duration = (:duration) WHERE ids= 1");
+          query.bindValue(":duration", duration);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+
+int Database::get_long_break_duration() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_long_break_duration();
+        } else {
+          int ret = query.record().value("long_break_duration").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+int Database::get_cycles() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_cycles();
+        } else {
+          int ret = query.record().value("pomodoros_b4_long_break").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_cycles(int cycles) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET pomodoros_b4_long_break = (:cycles) WHERE ids= 1");
+          query.bindValue(":cycles", cycles);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+int Database::get_ticking_sound() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_cycles();
+        } else {
+          int ret = query.record().value("ticking_sound").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_ticking_sound(int value) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET ticking_sound = (:value) WHERE ids= 1");
+          query.bindValue(":value", value);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
 }

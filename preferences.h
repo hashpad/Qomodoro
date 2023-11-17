@@ -24,6 +24,9 @@ public:
 
 
 private slots:
+    void on_tickingSound_stateChanged(int arg1);
+
+private slots:
     void on_pmCycles_valueChanged(int arg1);
 
 private slots:
