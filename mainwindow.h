@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "preferences.h"
+#include "about.h"
 #include "pomodoro.h"
 #include "stopwatch.h"
 #include "database.h"
@@ -61,6 +62,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Preferences* pref;
+    About* about;
     Pomodoro* pm;
     Stopwatch* sw;
     Database* db;

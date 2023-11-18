@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     pref = new Preferences(this, pm, db);
+    about = new About(this);
 
 
     pm->set_pm_duration(pref->get_pm_duration());
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete pref;
+    delete about;
     delete pm;
     delete sw;
     delete db;
@@ -68,6 +70,12 @@ void MainWindow::on_toolsCombo_currentIndexChanged(int index)
 {
     if(index == PREF) {
         this->pref->show();
+    }
+    if(index == ABOUT) {
+        this->about->show();
+    }
+    if(index == QUIT) {
+        QApplication::quit();
     }
     ui->toolsCombo->setCurrentIndex(0);
 }
