@@ -86,7 +86,6 @@ QChart *Chart::get_month_view_chart() {
       categories << QString::number(i+1);
     }
 
-    qInfo () << "text";
     QBarSeries *series = new QBarSeries();
     series->append(set0);
     series->append(set1);

@@ -17,10 +17,3 @@ void About::on_closeAbout_clicked()
 {
     this->hide();
 }
-
-
-void About::on_credits_clicked()
-{
-
-}
-

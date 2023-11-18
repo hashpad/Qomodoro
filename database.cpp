@@ -1,6 +1,7 @@
 #include "database.h"
 
 #include <QDebug>
+#include <QApplication>
 #include <QDate>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -15,9 +16,36 @@ Database::Database(QObject *parent, const QString &path)
         qInfo() << "Error: connection with db failed";
     } else {
         qInfo() << "db conn ok!";
+        if(!this->get_pomodoros(QDate::currentDate())) if(!this->init()) QApplication::quit();
     }
 }
 
+bool Database::init() {
+    QSqlQuery query;
+    query.prepare("CREATE TABLE pomodoros(ids integer primary key, duration integer, date DATE);");
+    if(!query.exec()) return false;
+
+    query.prepare("CREATE TABLE breaks(ids integer primary key, duration integer, date DATE);");
+    if(!query.exec()) return false;
+
+    QString query_str;
+    query_str = "CREATE TABLE config" \
+        "(ids integer primary key," \
+        " duration integer," \
+        " break_duration integer," \
+        " long_break_duration integer," \
+        " pomodoros_b4_long_break integer," \
+        " ticking_sound number(1)," \
+        " notify number(1)," \
+        " start_break_sound nvarchar(255)," \
+        " end_break_sound nvarchar(255)," \
+        " hide_other_notifications number(1))";
+
+    query.prepare(query_str);
+    if(!query.exec()) return false;
+
+    return true;
+}
 
 
 bool Database::add(int duration, QDate day, QString &type) {

@@ -15,8 +15,6 @@ public:
     explicit About(QWidget *parent = nullptr);
     ~About();
 
-private slots:
-    void on_credits_clicked();
 
 private slots:
     void on_closeAbout_clicked();

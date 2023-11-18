@@ -1,4 +1,3 @@
-#include <QTimer>
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
@@ -9,7 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->timerStacked->setCurrentIndex(0);
-    db = new Database(this, "/home/" + QDir::home().dirName() + "/Qomodoro/pomodoro.db");
+
+    QString cacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if(!QDir(cacheLocation).exists()) QDir().mkdir(cacheLocation);
+
+    db = new Database(this, cacheLocation + "/pomodoro.db");
+
 
     sw = new Stopwatch(this);
     pm = new Pomodoro(this, sw);

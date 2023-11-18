@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "preferences.h"
 #include "about.h"
 #include "pomodoro.h"

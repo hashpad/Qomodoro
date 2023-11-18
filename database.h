@@ -9,6 +9,7 @@ class Database : public QObject
     Q_OBJECT
 public:
     explicit Database(QObject *parent = nullptr, const QString &path = "");
+    bool init();
     bool add_pomodoro(int duration, QDate day);
     bool add_break(int duration, QDate day);
     bool add(int duration, QDate day, QString &type);
