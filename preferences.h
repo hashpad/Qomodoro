@@ -2,6 +2,7 @@
 #define PREFERENCES_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 #include "pomodoro.h"
 
@@ -22,6 +23,18 @@ public:
 
     ~Preferences();
 
+
+private slots:
+    void on_hideOtherNotification_stateChanged(int arg1);
+
+private slots:
+    void on_endBreakFileChooser_clicked();
+
+private slots:
+    void on_startBreakFileChooser_clicked();
+
+private slots:
+    void on_screenNotification_stateChanged(int arg1);
 
 private slots:
     void on_tickingSound_stateChanged(int arg1);

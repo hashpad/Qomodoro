@@ -1,6 +1,7 @@
 #include "pomodoro.h"
 #include <QDebug>
 #include <QDate>
+#include <QAudioOutput>
 
 
 Pomodoro::Pomodoro(QObject *parent, Stopwatch* sw, int pm_duration, int break_duration, int long_break_duration, int cycles, Database* db)
@@ -8,6 +9,8 @@ Pomodoro::Pomodoro(QObject *parent, Stopwatch* sw, int pm_duration, int break_du
 {
     this->state = PomodoroState::PM;
     this->sw->set_value(pm_duration);
+    this->player = new QMediaPlayer;
+    this->audio_output = new QAudioOutput;
 }
 
 bool Pomodoro::is_running() {return this->running;}
@@ -34,6 +37,12 @@ PomodoroState Pomodoro::change_state() {
     auto last_sw_value = this->sw->get_save();
     if(this->state == PM) {
         this->db->add_pomodoro(last_sw_value, QDate::currentDate());
+
+        player->setAudioOutput(audio_output);
+        QString source(db->get_start_break_sound());
+        qInfo() << "playing " << source;
+        player->setSource(QUrl::fromLocalFile(source));
+        player->play();
         if(current_cycle == cycles) {
             this->state = LB;
             this->current_cycle = 0;
@@ -45,6 +54,11 @@ PomodoroState Pomodoro::change_state() {
     } else {
         this->db->add_break(last_sw_value, QDate::currentDate());
         this->state = PM;
+        player->setAudioOutput(audio_output);
+        QString source(db->get_end_break_sound());
+        qInfo() << "playing " << source;
+        player->setSource(QUrl::fromLocalFile(source));
+        player->play();
     }
     this->reset_stopwatch();
     qInfo() << "state changed" << this->state;
@@ -77,4 +91,9 @@ void Pomodoro::reset_stopwatch() {
 
 int Pomodoro::get_cycles_left() {
     return this->cycles - this->current_cycle;
+}
+
+Pomodoro::~Pomodoro() {
+    delete player;
+    delete audio_output;
 }

@@ -21,8 +21,13 @@ Preferences::Preferences(QWidget *parent, Pomodoro* pm, Database* db)
     ui->longBreakDurationSlider->setSliderPosition(long_break_duration);
 
     int ticking_sound = db->get_ticking_sound();
-
     ui->tickingSound->setCheckState((Qt::CheckState)ticking_sound);
+
+    int notify = db->get_notify();
+    ui->screenNotification->setCheckState((Qt::CheckState)notify);
+
+    int hide_other_notifications = db->get_hide_other_notifications();
+    ui->hideOtherNotification->setCheckState((Qt::CheckState)hide_other_notifications);
 }
 
 int Preferences::get_pm_duration() {
@@ -86,5 +91,34 @@ void Preferences::on_pmCycles_valueChanged(int value)
 void Preferences::on_tickingSound_stateChanged(int arg1)
 {
     db->set_ticking_sound(arg1);
+}
+
+
+void Preferences::on_screenNotification_stateChanged(int arg1)
+{
+    db->set_notify(arg1);
+}
+
+
+void Preferences::on_startBreakFileChooser_clicked()
+{
+    auto file_name = QFileDialog::getOpenFileName(this,
+                                            tr("Open Audio File"), "/home/zebra", tr("Audio Files (*.mp3 *.wav *.ogg *.wma *.flac)"));
+    db->set_start_break_sound(file_name);
+}
+
+
+void Preferences::on_endBreakFileChooser_clicked()
+{
+    auto file_name = QFileDialog::getOpenFileName(this,
+                                            tr("Open Audio File"), "/home/zebra", tr("Audio Files (*.mp3 *.wav *.ogg *.wma *.flac)"));
+    db->set_end_break_sound(file_name);
+    qInfo() << file_name;
+}
+
+
+void Preferences::on_hideOtherNotification_stateChanged(int arg1)
+{
+    db->set_hide_other_notifications(arg1);
 }
 

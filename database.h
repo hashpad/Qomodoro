@@ -22,6 +22,14 @@ public:
     int get_cycles();
     bool set_ticking_sound(int value);
     int get_ticking_sound();
+    bool set_notify(int value);
+    int get_notify();
+    bool set_start_break_sound(QString value);
+    QString get_start_break_sound();
+    bool set_end_break_sound(QString value);
+    QString get_end_break_sound();
+    bool set_hide_other_notifications(int value);
+    int get_hide_other_notifications();
     int get_breaks(QDate day);
     int get_pomodoros(QDate day);
     bool prepare_config();

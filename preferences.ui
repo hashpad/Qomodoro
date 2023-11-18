@@ -25,12 +25,15 @@
         <item>
          <widget class="QLabel" name="label_16">
           <property name="text">
-           <string>Screen notifications</string>
+           <string>Screen notifications (Not supported yet)</string>
           </property>
          </widget>
         </item>
         <item alignment="Qt::AlignRight">
-         <widget class="QCheckBox" name="checkBox_3">
+         <widget class="QCheckBox" name="screenNotification">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -51,7 +54,7 @@
          </widget>
         </item>
         <item alignment="Qt::AlignRight">
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="startBreakFileChooser">
           <property name="text">
            <string>Choose file</string>
           </property>
@@ -69,7 +72,7 @@
          </widget>
         </item>
         <item alignment="Qt::AlignRight">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="endBreakFileChooser">
           <property name="text">
            <string>Choose file</string>
           </property>
@@ -224,12 +227,12 @@
         <item>
          <widget class="QLabel" name="label_24">
           <property name="text">
-           <string>Hide other notifications</string>
+           <string>Hide other notifications (Not supported yet)</string>
           </property>
          </widget>
         </item>
         <item alignment="Qt::AlignRight">
-         <widget class="QCheckBox" name="checkBox_4">
+         <widget class="QCheckBox" name="hideOtherNotification">
           <property name="text">
            <string/>
           </property>

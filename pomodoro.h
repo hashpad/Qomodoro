@@ -2,6 +2,7 @@
 #define POMODORO_H
 
 #include <QObject>
+#include <QtMultimedia/QMediaPlayer>
 
 #include "stopwatch.h"
 #include "database.h"
@@ -17,6 +18,7 @@ class Pomodoro : public QObject
     Q_OBJECT
 public:
     explicit Pomodoro(QObject *parent = nullptr, Stopwatch *sw = nullptr, int pomodoro_duration = 0, int break_duration = 0, int long_break_duration = 0, int cycles = 0, Database* db = nullptr);
+    ~Pomodoro();
     bool is_running();
     bool set_running();
     void stop();
@@ -51,6 +53,8 @@ private:
     PomodoroState state;
     Stopwatch* sw;
     Database* db;
+    QMediaPlayer *player;
+    QAudioOutput *audio_output;
     int pm_duration;
     int break_duration;
     int long_break_duration;

@@ -267,3 +267,137 @@ bool Database::set_ticking_sound(int value) {
     else qInfo() << "Error" << query.lastError();
     return false;
 }
+
+int Database::get_notify() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_notify();
+        } else {
+          int ret = query.record().value("notify").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_notify(int value) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET notify = (:value) WHERE ids= 1");
+          query.bindValue(":value", value);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+
+QString Database::get_start_break_sound() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_start_break_sound();
+        } else {
+          QString ret = query.record().value("start_break_sound").toString();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return "";
+}
+
+bool Database::set_start_break_sound(QString value) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET start_break_sound = (:value) WHERE ids= 1");
+          query.bindValue(":value", value);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+QString Database::get_end_break_sound() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_end_break_sound();
+        } else {
+          QString ret = query.record().value("end_break_sound").toString();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return "";
+}
+
+bool Database::set_end_break_sound(QString value) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET end_break_sound = (:value) WHERE ids= 1");
+          query.bindValue(":value", value);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
+
+
+int Database::get_hide_other_notifications() {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids= 1");
+    if(query.exec()) {
+        if(!query.first()) {
+            prepare_config();
+            return get_hide_other_notifications();
+        } else {
+          int ret = query.record().value("hide_other_notifications").toInt();
+          return ret;
+        }
+  }
+    else {
+        qInfo() << "Error:" << query.lastError();
+    }
+    return false;
+}
+
+bool Database::set_hide_other_notifications(int value) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM config WHERE ids = 1");
+    if(query.exec()) {
+        if(query.first()) {
+          query.prepare("UPDATE config SET hide_other_notifications = (:value) WHERE ids= 1");
+          query.bindValue(":value", value);
+          if(query.exec()) return true;
+          else qInfo() << "Error" << query.lastError();
+        }
+    }
+    else qInfo() << "Error" << query.lastError();
+    return false;
+}
