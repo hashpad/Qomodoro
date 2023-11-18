@@ -1,7 +1,4 @@
 #include "pomodoro.h"
-#include <QDebug>
-#include <QDate>
-#include <QAudioOutput>
 
 
 Pomodoro::Pomodoro(QObject *parent, Stopwatch* sw, int pm_duration, int break_duration, int long_break_duration, int cycles, Database* db)

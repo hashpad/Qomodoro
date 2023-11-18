@@ -1,11 +1,5 @@
 #include "database.h"
 
-#include <QDebug>
-#include <QApplication>
-#include <QDate>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlRecord>
 Database::Database(QObject *parent, const QString &path)
     : QObject{parent}
 {

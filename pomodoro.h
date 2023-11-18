@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QtMultimedia/QMediaPlayer>
+#include <QDebug>
+#include <QDate>
+#include <QAudioOutput>
 
 #include "stopwatch.h"
 #include "database.h"

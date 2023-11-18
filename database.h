@@ -3,6 +3,12 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QDebug>
+#include <QApplication>
+#include <QDate>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QSqlRecord>
 
 class Database : public QObject
 {

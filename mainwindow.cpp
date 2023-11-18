@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::update_stopwatch);
-    timer->start(100);
+    timer->start(1000);
 
     connect(sw, &Stopwatch::change_state, pm, &Pomodoro::change_state);
     connect(pref, &Preferences::update_stopwatch, this, &MainWindow::update_stopwatch);
