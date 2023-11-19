@@ -1,0 +1,10 @@
+[Desktop Entry]
+
+Type=Application
+Version=1.0
+Name=Qomodoro
+Comment=A Pomodoro timer application written in Qt
+Path=/usr/local/bin/Qomodoro
+Exec=Qomodoro
+Terminal=false
+Categories=Education;
