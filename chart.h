@@ -1,41 +1,36 @@
-#ifndef CHART_H
-#define CHART_H
+#pragma once
 
-#include <QObject>
-#include <QDate>
-#include <QtCharts>
 #include "database.h"
+#include <QDate>
+#include <QObject>
+#include <QtCharts>
 
-class Chart : public QObject
-{
-    Q_OBJECT
+class Chart : public QObject {
+  Q_OBJECT
 public:
-    explicit Chart(QObject *parent = nullptr, Database* db = nullptr);
-    ~Chart();
-    QChart* get_day_view_chart();
-    QChart* get_week_view_chart();
-    QChart* get_month_view_chart();
+  explicit Chart(QObject *parent = nullptr, Database *db = nullptr);
+  ~Chart();
+  QChart *get_day_view_chart();
+  QChart *get_week_view_chart();
+  QChart *get_month_view_chart();
 
-    int get_day_offset();
-    int get_week_offset();
-    int get_month_offset();
+  int get_day_offset();
+  int get_week_offset();
+  int get_month_offset();
 
+  void set_day_offset(int offset);
+  void set_week_offset(int offset);
+  void set_month_offset(int offset);
 
-    void set_day_offset(int offset);
-    void set_week_offset(int offset);
-    void set_month_offset(int offset);
-
-    QString get_day_name();
-    QString get_week_name();
-    QString get_month_name();
+  QString get_day_name();
+  QString get_week_name();
+  QString get_month_name();
 
 private:
-    QChart* chart;
-    Database* db;
-    int day_offset;
-    int week_offset;
-    int month_offset;
+  QChart *chart;
+  Database *db;
+  int day_offset;
+  int week_offset;
+  int month_offset;
 signals:
 };
-
-#endif // CHART_H

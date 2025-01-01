@@ -1,24 +1,29 @@
-#ifndef STOPWATCH_H
-#define STOPWATCH_H
+#pragma once
 
 #include <QObject>
 
-class Stopwatch : public QObject
-{
-    Q_OBJECT
+class Stopwatch : public QObject {
+  Q_OBJECT
 public:
-    explicit Stopwatch(QObject *parent = nullptr, const int value = 0);
-    void dec();
-    QString as_string();
-    void set_value(const int value);
-    int get_value();
-    int get_save();
+  explicit Stopwatch(QObject *parent = nullptr, const int value = 0);
+  // decrement stopwatch until it reaches 0, then emit signal to change state
+  void dec();
+  // get stopwatch value in the form mm:ss
+  QString as_string();
+  // set stopwatch value, it also sets the "save" value
+  void set_value(const int value);
+  // get current stopwatch value
+  int get_value();
+  // get starting stopwatch value
+  int get_save();
+
 private:
-    int value;
-    int save;
+  // stopwatch current value in seconds
+  int value;
+  // stopwatch starting value in seconds
+  int save;
 
 signals:
-    void change_state();
+  // used to publish that the stopwatch has reached 0
+  void change_state();
 };
-
-#endif // STOPWATCH_H
