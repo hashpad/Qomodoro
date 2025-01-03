@@ -41,7 +41,7 @@ private slots:
   void on_longBreakDurationSlider_valueChanged(int value);
 
 signals:
-  void update_stopwatch();
+  void update();
   void update_cycles();
 
 private:

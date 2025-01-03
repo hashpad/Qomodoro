@@ -8,9 +8,11 @@
 #include "stopwatch.h"
 #include <QMainWindow>
 #include <QTimer>
+#include <qvariant.h>
 
 enum STATES { PREF = 1, ABOUT = 2, QUIT = 3 };
 enum TIMER_TAB_PAGES { START = 0, POMODORO = 1 };
+enum MAIN_TABS { TIMER = 0, STATS = 1 };
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +24,12 @@ class MainWindow : public QMainWindow {
 
 public:
   MainWindow(QWidget *parent = nullptr);
+  void ui_set_tab(unsigned char tab);
+  void ui_set_page(unsigned char page);
+  void ui_update_cycles_left();
+
+  void ui_set_chart_view(QChartView *qchart_view, QChart *new_chart);
+
   ~MainWindow();
 
 private slots:
@@ -50,15 +58,20 @@ private slots:
 
   void update_cycles();
   void update_stopwatch();
+  void update_state();
 
 private:
+  void create_objects();
+  void start_global_timer(unsigned int fire_each);
+  void connect_signals();
   QString get_cache_location();
-  bool init_db();
-  Ui::MainWindow *ui;
-  Preferences *pref;
-  About *about;
+
   Pomodoro *pm;
   Stopwatch *sw;
   Database *db;
+
   Chart *chart;
+  Ui::MainWindow *ui;
+  Preferences *pref;
+  About *about;
 };

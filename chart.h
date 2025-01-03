@@ -4,6 +4,7 @@
 #include <QDate>
 #include <QObject>
 #include <QtCharts>
+#include <qchart.h>
 
 class Chart : public QObject {
   Q_OBJECT

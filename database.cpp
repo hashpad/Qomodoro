@@ -119,8 +119,6 @@ bool Database::has_pomodoros() {
 }
 
 int Database::get_pomodoros(QDate day) {
-  qInfo() << "Current day is = " << day;
-  qInfo() << "Current day as string is = " << day.toString();
   QSqlQuery query;
   query.prepare("SELECT * FROM pomodoros WHERE date = (:day)");
   query.bindValue(":day", day.toString());

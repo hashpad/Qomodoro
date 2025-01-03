@@ -2,6 +2,8 @@ CMakeLists.txt.user
 build/
 compile_commands.json
 .qt/
+.qtcreator/
+.vscode/
 
 *~
 *.autosave

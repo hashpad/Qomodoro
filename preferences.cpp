@@ -47,6 +47,7 @@ QString Preferences::format_minutes(int value) {
 void Preferences::on_pmDurationSlider_valueChanged(int value) {
   ui->pmDurationLabel->setText(this->format_minutes(value));
   pm->set_pm_duration(value * 60);
+  pm->reset_sw();
   db->set_pm_duration(value * 60);
   emit update();
 }
@@ -54,6 +55,7 @@ void Preferences::on_pmDurationSlider_valueChanged(int value) {
 void Preferences::on_breakDurationSlider_valueChanged(int value) {
   ui->breakDurationLabel->setText(this->format_minutes(value));
   pm->set_break_duration(value * 60);
+  pm->reset_sw();
   db->set_break_duration(value * 60);
   emit update();
 }
@@ -61,6 +63,7 @@ void Preferences::on_breakDurationSlider_valueChanged(int value) {
 void Preferences::on_longBreakDurationSlider_valueChanged(int value) {
   ui->longBreakDurationLabel->setText(this->format_minutes(value));
   pm->set_long_break_duration(value * 60);
+  pm->reset_sw();
   db->set_long_break_duration(value * 60);
   emit update();
 }

@@ -10,43 +10,44 @@
 #include "stopwatch.h"
 
 enum PomodoroState {
-  PM,
-  SB,
-  LB,
+  PM = 0,
+  SB = 1,
+  LB = 2,
 };
 
 class Pomodoro : public QObject {
   Q_OBJECT
 public:
   explicit Pomodoro(QObject *parent = nullptr, Stopwatch *sw = nullptr,
-                    int pomodoro_duration = 0, int break_duration = 0,
-                    int long_break_duration = 0, int cycles = 0,
                     Database *db = nullptr);
   ~Pomodoro();
   bool is_running();
-  bool set_running();
+  // returns current running states and then toggles it
+  bool toggle_running();
   void stop();
-  void reset_stopwatch();
-  void set_state(PomodoroState ps);
-  PomodoroState get_state();
-  void inc_cycles();
 
   int get_pm_duration();
   int get_break_duration();
   int get_long_break_duration();
   int get_cycles();
   int get_cycles_left();
+  PomodoroState get_state();
 
   void set_pm_duration(int value);
   void set_break_duration(int value);
   void set_long_break_duration(int value);
   void set_cycles(int value);
-  void set_db(Database *db);
+  void set_state(PomodoroState ps, bool count_cycle);
 
+  void reset_sw();
+
+  void inc_cycles();
 public slots:
   PomodoroState change_state();
 
 signals:
+  void update_cycles();
+  void state_changed();
 
 private:
   PomodoroState state;
@@ -54,6 +55,7 @@ private:
   Database *db;
   QMediaPlayer *player;
   QAudioOutput *audio_output;
+
   int pm_duration;
   int break_duration;
   int long_break_duration;

@@ -8,12 +8,13 @@ QChart *Chart::get_day_view_chart() {
   auto current_day = QDate::currentDate().addDays(day_offset);
   int today_breaks = db->get_breaks(current_day) / 60;
   int today_pomodoros = db->get_pomodoros(current_day) / 60;
-  QBarSet *set0 = new QBarSet("Value");
+  QBarSet *set0 = new QBarSet("Value", this);
 
   *set0 << today_pomodoros << today_breaks;
 
   QBarSeries *series = new QBarSeries(this);
   series->append(set0);
+
   chart = new QChart();
   chart->addSeries(series);
   chart->setAnimationOptions(QChart::SeriesAnimations);
