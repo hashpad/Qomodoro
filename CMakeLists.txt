@@ -16,41 +16,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Charts Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Charts Multimedia)
 
-set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+FILE(GLOB ALL_SRCS src/*.cpp src/ui/*.cpp src/data/*.cpp src/core/*.cpp)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src/core
+    ${CMAKE_SOURCE_DIR}/src/ui
+    ${CMAKE_SOURCE_DIR}/src/data
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Qomodoro
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        preferences.h preferences.cpp preferences.ui
-        stopwatch.h stopwatch.cpp
-        pomodoro.h pomodoro.cpp
-        database.h database.cpp
-        chart.h chart.cpp
-        about.h about.cpp about.ui
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET Qomodoro APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(Qomodoro SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(Qomodoro
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+add_executable(
+	Qomodoro
+	${ALL_SRCS}
+)
+
 
 target_link_libraries(Qomodoro PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Qt${QT_MAJOR_VERSION}::Charts Qt${QT_VERSION_MAJOR}::Multimedia)
 

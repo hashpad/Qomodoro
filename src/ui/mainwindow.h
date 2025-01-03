@@ -1,11 +1,11 @@
 #pragma once
 
 #include "about.h"
-#include "chart.h"
-#include "database.h"
-#include "pomodoro.h"
+#include "core/chart.h"
+#include "core/pomodoro.h"
+#include "core/stopwatch.h"
+#include "data/database.h"
 #include "preferences.h"
-#include "stopwatch.h"
 #include <QMainWindow>
 #include <QTimer>
 #include <qvariant.h>

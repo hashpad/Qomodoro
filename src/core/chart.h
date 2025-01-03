@@ -1,6 +1,6 @@
 #pragma once
 
-#include "database.h"
+#include "data/database.h"
 #include <QDate>
 #include <QObject>
 #include <QtCharts>

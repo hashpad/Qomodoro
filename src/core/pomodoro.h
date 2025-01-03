@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QtMultimedia/QMediaPlayer>
 
-#include "database.h"
+#include "data/database.h"
 #include "stopwatch.h"
 
 enum PomodoroState {
