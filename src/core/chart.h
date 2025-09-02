@@ -10,22 +10,23 @@ class Chart : public QObject {
   Q_OBJECT
 public:
   explicit Chart(QObject *parent = nullptr, Database *db = nullptr);
-  ~Chart();
+
+  ~Chart() override;
   QChart *get_day_view_chart();
   QChart *get_week_view_chart();
   QChart *get_month_view_chart();
 
-  int get_day_offset();
-  int get_week_offset();
-  int get_month_offset();
+  int get_day_offset() const;
+  int get_week_offset() const;
+  int get_month_offset() const;
 
   void set_day_offset(int offset);
   void set_week_offset(int offset);
   void set_month_offset(int offset);
 
-  QString get_day_name();
-  QString get_week_name();
-  QString get_month_name();
+  QString get_day_name() const;
+  QString get_week_name() const;
+  QString get_month_name() const;
 
 private:
   QChart *chart;

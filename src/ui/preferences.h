@@ -18,6 +18,7 @@ public:
   int get_break_duration();
   int get_long_break_duration();
   int get_cycles();
+  bool get_ticking_sound();
 
   ~Preferences();
 
@@ -43,6 +44,8 @@ private slots:
 signals:
   void update();
   void update_cycles();
+  void ticking_sound();
+
 
 private:
   Ui::Preferences *ui;

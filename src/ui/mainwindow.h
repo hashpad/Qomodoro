@@ -59,6 +59,7 @@ private slots:
   void update_cycles();
   void update_stopwatch();
   void update_state();
+  void update_ticking_sound();
 
 private:
   void create_objects();

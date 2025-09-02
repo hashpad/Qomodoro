@@ -4,7 +4,7 @@
 #include <qlogging.h>
 #include <qobject.h>
 
-#define TIMER_SPEED 10
+#define TIMER_SPEED 1000
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -55,7 +55,6 @@ void MainWindow::create_objects() {
 
   // setup the charts
   chart = new Chart(this, db);
-  // set_chart_view does extra memory management
   this->ui_set_chart_view(ui->dayChartView, chart->get_day_view_chart());
   this->ui_set_chart_view(ui->weekChartView, chart->get_week_view_chart());
   this->ui_set_chart_view(ui->monthChartView, chart->get_month_view_chart());
@@ -85,6 +84,11 @@ void MainWindow::connect_signals() {
 
   connect(pref, &Preferences::update, this, &MainWindow::update_stopwatch);
   connect(pref, &Preferences::update_cycles, this, &MainWindow::update_cycles);
+  connect(pref, &Preferences::ticking_sound, this, &MainWindow::update_ticking_sound);
+}
+
+void MainWindow::update_ticking_sound() {
+  sw->set_ticking_enabled(pref->get_ticking_sound());
 }
 
 void MainWindow::update_state() {

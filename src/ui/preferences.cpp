@@ -39,6 +39,10 @@ int Preferences::get_long_break_duration() {
 }
 int Preferences::get_cycles() { return ui->pmCycles->value(); }
 
+bool Preferences::get_ticking_sound() {
+  return ui->tickingSound->checkState() == Qt::Checked;
+}
+
 Preferences::~Preferences() { delete ui; }
 
 QString Preferences::format_minutes(int value) {
@@ -76,6 +80,7 @@ void Preferences::on_pmCycles_valueChanged(int value) {
 
 void Preferences::on_tickingSound_stateChanged(int arg1) {
   db->set_ticking_sound(arg1);
+  emit ticking_sound();
 }
 
 void Preferences::on_screenNotification_stateChanged(int arg1) {
